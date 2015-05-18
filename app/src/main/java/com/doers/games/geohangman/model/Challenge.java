@@ -19,7 +19,7 @@ public class Challenge {
     private String word;
 
     /** Map Point **/
-    private MapPoint point;
+    private MapPoint mapPoint;
 
     public Bitmap getPic() {
         return pic;
@@ -37,12 +37,12 @@ public class Challenge {
         this.word = word;
     }
 
-    public MapPoint getPoint() {
-        return point;
+    public MapPoint getMapPoint() {
+        return mapPoint;
     }
 
-    public void setPoint(MapPoint point) {
-        this.point = point;
+    public void setMapPoint(MapPoint mapPoint) {
+        this.mapPoint = mapPoint;
     }
 
     /**
@@ -50,18 +50,29 @@ public class Challenge {
      */
     public static class MapPoint {
 
-        /** Location on map **/
-        private LatLng location;
+        /** Lat on map **/
+        private double lat;
+
+        /** Lng on map **/
+        private double lng;
 
         /** Zoom to be used **/
         private float zoom;
 
-        public LatLng getLocation() {
-            return location;
+        public double getLat() {
+            return lat;
         }
 
-        public void setLocation(LatLng location) {
-            this.location = location;
+        public void setLat(double lat) {
+            this.lat = lat;
+        }
+
+        public double getLng() {
+            return lng;
+        }
+
+        public void setLng(double lng) {
+            this.lng = lng;
         }
 
         public float getZoom() {

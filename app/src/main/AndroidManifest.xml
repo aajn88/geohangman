@@ -54,6 +54,10 @@
             android:name=".controllers.SelectLocationHintActivity"
             android:label="@string/title_activity_maps" >
         </activity>
+        <activity
+            android:name=".controllers.TypeWordActivity"
+            android:label="@string/title_activity_type_word" >
+        </activity>
     </application>
 
 </manifest>

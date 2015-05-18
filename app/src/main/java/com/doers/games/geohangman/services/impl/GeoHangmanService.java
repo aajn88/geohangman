@@ -2,13 +2,12 @@ package com.doers.games.geohangman.services.impl;
 
 import android.graphics.Bitmap;
 
-import com.doers.games.geohangman.R;
 import com.doers.games.geohangman.model.Challenge;
 import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.inject.Singleton;
 
-import roboguice.inject.InjectResource;
+import java.util.Map;
 
 /**
  *
@@ -52,12 +51,36 @@ public class GeoHangmanService implements IGeoHangmanService {
     /**
      * This method receives a map location (latitude and longitude) and an specific zoom value
      *
-     * @param location to be stored
+     * @param lat latitude value to be stored
+     * @param lng longitude value to be stored
      * @param zoom to be stored
      */
     @Override
-    public void storeLocation(LatLng location, float zoom) {
+    public void storeLocation(double lat, double lng, float zoom) {
+        Challenge.MapPoint mapPoint = new Challenge.MapPoint();
+        mapPoint.setLat(lat);
+        mapPoint.setLng(lng);
+        mapPoint.setZoom(zoom);
 
+        challenge.setMapPoint(mapPoint);
+    }
+
+    /**
+     * This method clears stored location
+     */
+    @Override
+    public void clearLocation() {
+        challenge.setMapPoint(null);
+    }
+
+    /**
+     * Returns stored location
+     *
+     * @return Stored location or null if it does not exist
+     */
+    @Override
+    public Challenge.MapPoint getStoredLocation() {
+        return challenge.getMapPoint();
     }
 
     /**
@@ -67,7 +90,17 @@ public class GeoHangmanService implements IGeoHangmanService {
      */
     @Override
     public void storeWord(String word) {
+        challenge.setWord(word);
+    }
 
+    /**
+     * This method returns the stored word to be guessed
+     *
+     * @return Word to be guessed or null if it does not exist
+     */
+    @Override
+    public String getStoredWord() {
+        return challenge.getWord();
     }
 
     /**

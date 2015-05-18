@@ -11,4 +11,8 @@
     <string name="title_activity_maps">Select a location tip!</string>
     <string name="store_location">Store</string>
     <string name="no_store_location">No add hint</string>
+    <string name="title_activity_type_word">TypeWordActivity</string>
+    <string name="type_word">Type the word to be guessed</string>
+    <string name="word_constraint">Spaces, special characters and numbers are not allowed</string>
+    <string name="send_challenge">Send Challenge!</string>
 </resources>
