@@ -15,4 +15,8 @@
     <string name="type_word">Type the word to be guessed</string>
     <string name="word_constraint">Spaces, special characters and numbers are not allowed</string>
     <string name="send_challenge">Send Challenge!</string>
+    <string name="title_activity_send_challenge">SendChallengeActivity</string>
+    <string name="send_challenge_nfc">Send the Challenge thru NFC!</string>
+    <string name="title_activity_start_challenge">StartChallengeActivity</string>
+    <string name="title_activity_receive_challenge">RecieveChallengeActivity</string>
 </resources>

@@ -1,9 +1,9 @@
 package com.doers.games.geohangman.controllers;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,24 +54,50 @@ public class TypeWordActivity extends RoboActionBarActivity {
 
         mTypedWordEt.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String newString = s.toString();
-                boolean isValid = validateWord(newString);
-                mSendChallengeBtn.setEnabled(isValid);
-
-                if(s.length() != 0 && !isValid) {
-                    Toast.makeText(TypeWordActivity.this, R.string.word_constraint, Toast.LENGTH_SHORT).show();
-                }
-
-                geoHangmanService.storeWord(newString);
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                processString(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
         });
+
+        mSendChallengeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSendChallengeActivity();
+            }
+        });
+    }
+
+    /**
+     * This method starts SendChallengeActivity
+     */
+    private void startSendChallengeActivity() {
+        Intent sendChallengeIntent = new Intent(this, SendChallengeActivity.class);
+        startActivity(sendChallengeIntent);
+    }
+
+    /**
+     * This method processes the string to know if is valid.
+     * If is not valid, then next button is disabled and a Toast message is displayed
+     *
+     * @param s String to be validated
+     */
+    private void processString(String s) {
+        boolean isValid = validateWord(s);
+        mSendChallengeBtn.setEnabled(isValid);
+
+        if (s.length() != 0 && !isValid) {
+            Toast.makeText(TypeWordActivity.this, R.string.word_constraint, Toast.LENGTH_SHORT).show();
+        }
+
+        geoHangmanService.storeWord(s);
     }
 
     /**

@@ -14,4 +14,10 @@ public final class Messages {
     /** Message to the user to check his SD card **/
     public static final String CREATING_FILE_ERROR = "Can't create file to take picture!";
 
+    /** Message when NFC error occurs sending files **/
+    public static final String NFC_SEND_FILE_ERROR = "An NFC error has occurred while sending files";
+
+    /** Message when is loading **/
+    public static final String LOADING = "Loading...";
+
 }

@@ -5,10 +5,14 @@
     <uses-feature
         android:name="android.hardware.camera2.full"
         android:required="true" />
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <!--
  The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -57,6 +61,18 @@
         <activity
             android:name=".controllers.TypeWordActivity"
             android:label="@string/title_activity_type_word" >
+        </activity>
+        <activity
+            android:name=".controllers.SendChallengeActivity"
+            android:label="@string/title_activity_send_challenge" >
+        </activity>
+        <activity
+            android:name=".controllers.StartChallengeActivity"
+            android:label="@string/title_activity_start_challenge" >
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
     </application>
 

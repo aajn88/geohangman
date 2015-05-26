@@ -1,12 +1,14 @@
 package com.doers.games.geohangman.services;
 
 import android.graphics.Bitmap;
+import android.nfc.NdefMessage;
 
 import com.doers.games.geohangman.model.Challenge;
-import com.google.android.gms.maps.model.LatLng;
 
 /**
- * Created by Antonio on 13/05/2015.
+ * This is the GeoHangman main Interface. This interface has all main services of GeoHangman.
+ *
+ * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
 public interface IGeoHangmanService {
 
@@ -60,8 +62,23 @@ public interface IGeoHangmanService {
     String getStoredWord();
 
     /**
-     * This method sets up files to be sent through NFC
+     * This method build NdefMessage based on the Challenge to be sent through NFC.
+     *
+     * This NdefMessage has two NdefRecords, one for challenge pic and the other one with challenge args:
+     *
+     * NdefRecord[0] = challengeImage
+     * NdefRecord[1] = args separated by |, i.e.: "(word)|(lat)|(lng)|(zoom)" -> "MyWord|1.1212313|4.1132133|10.0"
+     *
+     * @return NdefMessage with Challenge args and pics in separated NdefRecords
      */
-    void sendChallenge();
+    NdefMessage buildNdefMessage();
+
+    /**
+     * This method receives the image bytes and challengeArgs to start the Challenge
+     *
+     * @param image byte array
+     * @param challengeArgs args separated by |, i.e.: "(word)|(lat)|(lng)|(zoom)" -> "MyWord|1.1212313|4.1132133|10.0"
+     */
+    void startChallenge(byte []image, String challengeArgs);
 
 }

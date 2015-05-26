@@ -6,12 +6,8 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.doers.games.geohangman.R;
-import com.doers.games.geohangman.constants.Messages;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
@@ -32,15 +28,11 @@ public final class ImageUtils {
     public static Bitmap grabImage(ContentResolver cr, Uri imageUri) throws IOException {
         cr.notifyChange(imageUri, null);
 
-        Bitmap image = null;
-
         ExifInterface ei = new ExifInterface(imageUri.getPath());
         int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 
-        image = MediaStore.Images.Media.getBitmap(cr, imageUri);
-        image = ImageUtils.rotateBitmap(image, orientation);
-
-        return image;
+        Bitmap image = MediaStore.Images.Media.getBitmap(cr, imageUri);
+        return ImageUtils.rotateBitmap(image, orientation);
     }
 
     /**
@@ -51,7 +43,7 @@ public final class ImageUtils {
      * @param orientation
      * @return New Bitmap with rotated image
      */
-    public static Bitmap rotateBitmap(Bitmap image, int orientation) {
+    private static Bitmap rotateBitmap(Bitmap image, int orientation) {
         Matrix matrix = new Matrix();
         switch (orientation) {
             case ExifInterface.ORIENTATION_ROTATE_90:
@@ -65,6 +57,16 @@ public final class ImageUtils {
                 break;
         }
         return Bitmap.createBitmap(image, 0, 0, image.getWidth(), image.getHeight(), matrix, true);
+    }
+
+    public static byte []buildBitmapByteArray(Bitmap image) {
+        return buildBitmapByteArray(image, Bitmap.CompressFormat.PNG, 100);
+    }
+
+    public static byte []buildBitmapByteArray(Bitmap image, Bitmap.CompressFormat format, int quality) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(format, quality, stream);
+        return stream.toByteArray();
     }
 
 }
