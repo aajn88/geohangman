@@ -53,7 +53,7 @@ public class MainActivity extends RoboActionBarActivity {
         mEmulateNfcBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String args = "MyWord|1.1212313|4.1132133|10.0";
+                String args = "MyWord|33.96482810963319|-118.30714412033558|6.589385";
                 Bitmap image = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
 
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();

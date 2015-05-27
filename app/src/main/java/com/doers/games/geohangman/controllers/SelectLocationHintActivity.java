@@ -2,10 +2,12 @@ package com.doers.games.geohangman.controllers;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.doers.games.geohangman.R;
+import com.doers.games.geohangman.constants.Messages;
 import com.doers.games.geohangman.model.Challenge;
 import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -140,6 +142,12 @@ public class SelectLocationHintActivity extends RoboFragmentActivity {
                 mMap.addMarker(new MarkerOptions().position(latLng));
                 mStoreLocationBtn.setEnabled(Boolean.TRUE);
                 geoHangmanService.storeLocation(latLng.latitude, latLng.longitude, mMap.getCameraPosition().zoom);
+                Log.d(Messages.MAP_POINT_SELECTED_TAG,
+                        new StringBuilder().
+                                append(latLng).
+                                append(", Zoom = ").
+                                append(mMap.getCameraPosition().zoom).
+                                toString());
             }
         });
 

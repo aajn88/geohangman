@@ -20,4 +20,5 @@ public final class Messages {
     /** Message when is loading **/
     public static final String LOADING = "Loading...";
 
+    public static final String MAP_POINT_SELECTED_TAG = "MapPointSelected";
 }

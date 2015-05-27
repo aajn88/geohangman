@@ -164,4 +164,14 @@ public class GeoHangmanService implements IGeoHangmanService {
         challenge = ChallengeUtils.parseChallenge(image, challengeArgs);
     }
 
+    /**
+     * This method verifies if that a given word is exactly the Challenge word to be guessed
+     *
+     * @param word to verify
+     * @return True if there's a match, otherwise returns False
+     */
+    public Boolean verifyWord(String word) {
+        return getStoredWord().equals(word);
+    }
+
 }

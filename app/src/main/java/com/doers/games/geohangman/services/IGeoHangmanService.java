@@ -81,4 +81,12 @@ public interface IGeoHangmanService {
      */
     void startChallenge(byte []image, String challengeArgs);
 
+    /**
+     * This method verifies if that a given word is exactly the Challenge word to be guessed
+     *
+     * @param word to verify
+     * @return True if there's a match, otherwise returns False
+     */
+    Boolean verifyWord(String word);
+
 }
