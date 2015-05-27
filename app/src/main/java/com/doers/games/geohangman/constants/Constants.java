@@ -13,4 +13,7 @@ public final class Constants {
 
     /** Constant for temporary Challenge Extra **/
     public static final String CHALLENGE_EXTRA = "challengeExtra";
+
+    /** Private no-parameters constructor **/
+    private Constants(){}
 }

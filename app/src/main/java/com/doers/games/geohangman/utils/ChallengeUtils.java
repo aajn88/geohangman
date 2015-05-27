@@ -5,8 +5,6 @@ import android.graphics.BitmapFactory;
 
 import com.doers.games.geohangman.model.Challenge;
 
-import java.util.Random;
-
 /**
  * This ChallengeUtils helps to process basic Challenge operations
  *
@@ -14,11 +12,8 @@ import java.util.Random;
  */
 public final class ChallengeUtils {
 
-    /** Separator used for challenge args **/
-    private static final String SEPARATOR = "|";
-
-    /** Regex Separator used for challenge args **/
-    private static final String REGEX_SEPARATOR = "\\|";
+    /** Private no-parameters constructor **/
+    private ChallengeUtils(){}
 
     /**
      * This method parsers the variables in the intent to a Challenge
@@ -53,7 +48,7 @@ public final class ChallengeUtils {
     private static void completeChallenge(Challenge challenge, String challengeArgs) {
         Challenge.MapPoint mapPoint = new Challenge.MapPoint();
 
-        String []args = challengeArgs.split(REGEX_SEPARATOR);
+        String []args = challengeArgs.split(StringUtils.REGEX_SEPARATOR);
         challenge.setWord(args[0]);
         mapPoint.setLat(Double.parseDouble(args[1]));
         mapPoint.setLng(Double.parseDouble(args[2]));
@@ -82,47 +77,14 @@ public final class ChallengeUtils {
 
         StringBuilder sb = new StringBuilder();
         sb.append(challenge.getWord());
-        sb.append(SEPARATOR);
+        sb.append(StringUtils.SEPARATOR);
         sb.append(mp.getLat());
-        sb.append(SEPARATOR);
+        sb.append(StringUtils.SEPARATOR);
         sb.append(mp.getLng());
-        sb.append(SEPARATOR);
+        sb.append(StringUtils.SEPARATOR);
         sb.append(mp.getZoom());
 
         return sb.toString();
-    }
-
-    /**
-     *
-     * This method disorders letter of a given word
-     *
-     * @param word to be disordered
-     * @return disordered String
-     */
-    public static String disorderString(String word) {
-        StringBuilder sb = new StringBuilder(word);
-
-        Random ran = new Random();
-
-        int s = word.length();
-        for (int i = 0; i < s - 1; i++) {
-            int index = ran.nextInt(s - (i + 1)) + 1 + i;
-            swap(sb, i, index);
-        }
-
-        return sb.toString();
-    }
-
-    /**
-     * This method swaps chars at position i and j
-     * @param sb where chars will be swap
-     * @param i char at position i
-     * @param j char at position j
-     */
-    private static void swap(StringBuilder sb, int i, int j) {
-        Character c = sb.charAt(i);
-        sb.setCharAt(i, sb.charAt(j));
-        sb.setCharAt(j, c);
     }
 
 }

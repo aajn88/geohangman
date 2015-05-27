@@ -20,6 +20,9 @@ public final class ImageUtils {
     /** Image rotation constant **/
     private static final float ROTATION_DEGREES = 90.0f;
 
+    /** Private no-parameters constructor **/
+    private ImageUtils(){}
+
     /**
      * This method retrieves full-sized image from temporary storage
      *

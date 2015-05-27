@@ -21,4 +21,7 @@ public final class Messages {
     public static final String LOADING = "Loading...";
 
     public static final String MAP_POINT_SELECTED_TAG = "MapPointSelected";
+
+    /** Private no-parameters constructor **/
+    private Messages(){}
 }
