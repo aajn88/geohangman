@@ -29,8 +29,16 @@ public final class Messages {
     public static final String CIRCLES_PEOPLE_TAG = "CIRCLES_PEOPLE_TAG";
 
     /** Map Point Selected Tag * */
-    public static final String PERSON_FRIENDS_INFORMATION_ERROR = "Error requesting people data: " +
-            "%s";
+    public static final String PERSON_FRIENDS_INFORMATION_ERROR =
+            "Error requesting people data: " + "%s";
+
+    /** Retrieving Friends Information * */
+    public static final String RETRIEVING_FRIENDS_INFORMATION =
+            "Retrieving friends " + "information for {Id = %s, Name = %s}";
+
+    /** Retrieving friends information finished * */
+    public static final java.lang.String RETRIEVING_FRIENDS_INFORMATION_FINISH = "Retrieving friends information process has finished";
+
 
     /** Private no-parameters constructor * */
     private Messages() {

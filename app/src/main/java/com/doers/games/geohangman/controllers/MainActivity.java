@@ -3,11 +3,13 @@ package com.doers.games.geohangman.controllers;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.doers.games.geohangman.R;
+import com.doers.games.geohangman.constants.Messages;
 import com.doers.games.geohangman.model.UserInfo;
 import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.doers.games.geohangman.utils.GooglePlusUtils;
@@ -177,8 +179,13 @@ public class MainActivity extends RoboActionBarActivity
 
     @Override
     public void onResult(People.LoadPeopleResult peopleData) {
+        Log.d(Messages.CIRCLES_PEOPLE_TAG,
+                String.format(Messages.RETRIEVING_FRIENDS_INFORMATION, mCurrentUser.getId()
+                        , mCurrentUser.getName()));
         List<UserInfo> people = GooglePlusUtils.retrievePeople(peopleData);
         mCurrentUser.setFriends(people);
+
+        Log.d(Messages.CIRCLES_PEOPLE_TAG, Messages.RETRIEVING_FRIENDS_INFORMATION_FINISH);
 
         geoHangmanService.storeCurrentUser(mCurrentUser);
     }
