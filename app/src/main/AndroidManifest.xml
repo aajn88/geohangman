@@ -11,6 +11,8 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -71,8 +73,19 @@
             android:label="@string/title_activity_start_challenge" >
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/com.doers.games.geohangman" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".controllers.MainMenuActivity"
+            android:label="@string/title_activity_main_menu"
+            android:parentActivityName="roboguice.activity.RoboActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="roboguice.activity.RoboActivity" />
         </activity>
     </application>
 

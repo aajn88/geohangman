@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.nfc.NdefMessage;
 
 import com.doers.games.geohangman.model.Challenge;
+import com.doers.games.geohangman.model.UserInfo;
 
 /**
  * This is the GeoHangman main Interface. This interface has all main services of GeoHangman.
@@ -29,8 +30,8 @@ public interface IGeoHangmanService {
     /**
      * This method receives a map location (latitude and longitude) and an specific zoom value
      *
-     * @param lat latitude value to be stored
-     * @param lng longitude value to be stored
+     * @param lat  latitude value to be stored
+     * @param lng  longitude value to be stored
      * @param zoom to be stored
      */
     void storeLocation(double lat, double lng, float zoom);
@@ -63,11 +64,12 @@ public interface IGeoHangmanService {
 
     /**
      * This method build NdefMessage based on the Challenge to be sent through NFC.
-     *
-     * This NdefMessage has two NdefRecords, one for challenge pic and the other one with challenge args:
-     *
-     * NdefRecord[0] = challengeImage
-     * NdefRecord[1] = args separated by |, i.e.: "(word)|(lat)|(lng)|(zoom)" -> "MyWord|1.1212313|4.1132133|10.0"
+     * <p/>
+     * This NdefMessage has two NdefRecords, one for challenge pic and the other one with challenge
+     * args:
+     * <p/>
+     * NdefRecord[0] = challengeImage NdefRecord[1] = args separated by |, i.e.:
+     * "(word)|(lat)|(lng)|(zoom)" -> "MyWord|1.1212313|4.1132133|10.0"
      *
      * @return NdefMessage with Challenge args and pics in separated NdefRecords
      */
@@ -76,17 +78,31 @@ public interface IGeoHangmanService {
     /**
      * This method receives the image bytes and challengeArgs to start the Challenge
      *
-     * @param image byte array
-     * @param challengeArgs args separated by |, i.e.: "(word)|(lat)|(lng)|(zoom)" -> "MyWord|1.1212313|4.1132133|10.0"
+     * @param image         byte array
+     * @param challengeArgs args separated by |, i.e.: "(word)|(lat)|(lng)|(zoom)" ->
+     *                      "MyWord|1.1212313|4.1132133|10.0"
      */
-    void startChallenge(byte []image, String challengeArgs);
+    void startChallenge(byte[] image, String challengeArgs);
 
     /**
      * This method verifies if that a given word is exactly the Challenge word to be guessed
      *
      * @param word to verify
+     *
      * @return True if there's a match, otherwise returns False
      */
     Boolean verifyWord(String word);
+
+    /**
+     * This method restarts all challenge
+     */
+    void restartAll();
+
+    /**
+     * This method stores current User. It sends it to GeoHangman Server to store it
+     *
+     * @param currentUser to be stored
+     */
+    void storeCurrentUser(UserInfo currentUser);
 
 }

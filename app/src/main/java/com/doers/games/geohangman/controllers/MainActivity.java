@@ -1,48 +1,72 @@
 package com.doers.games.geohangman.controllers;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
-import android.nfc.NfcAdapter;
+import android.content.IntentSender;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
-import com.doers.games.geohangman.BuildConfig;
 import com.doers.games.geohangman.R;
-import com.doers.games.geohangman.constants.Constants;
+import com.doers.games.geohangman.model.UserInfo;
+import com.doers.games.geohangman.services.IGeoHangmanService;
+import com.doers.games.geohangman.utils.GooglePlusUtils;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.plus.People;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
+import com.google.inject.Inject;
 
-import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import roboguice.RoboGuice;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
+/**
+ * This is the GeoHangman Main Activity.
+ * <p/>
+ * This class manages all G+ sign-in and profile information as User's Id and User's friends Id
+ *
+ * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
+ */
+public class MainActivity extends RoboActionBarActivity
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        ResultCallback<People.LoadPeopleResult> {
 
-public class MainActivity extends RoboActionBarActivity {
+    /** G+ sign-in button * */
+    @InjectView(R.id.signInButton)
+    private SignInButton mSignInButton;
 
-    @InjectView(R.id.emulateNfcBtn)
-    private Button mEmulateNfcBtn;
+    /* Request code used to invoke sign in user interactions. */
+    private static final int RC_SIGN_IN = 0;
+
+    /* Client used to interact with Google APIs. */
+    private GoogleApiClient mGoogleApiClient;
+
+    /* A flag indicating that a PendingIntent is in progress and prevents
+     * us from starting further intents.
+     */
+    private boolean mIntentInProgress;
+
+    /**
+     * True if the sign-in button was clicked.  When true, we know to resolve all issues preventing
+     * sign-in without waiting.
+     */
+    private boolean mSignInClicked;
+
+    /** Current Session User * */
+    private UserInfo mCurrentUser;
+
+    /** GeoHangman Main Service **/
+    @Inject
+    private IGeoHangmanService geoHangmanService;
 
     static {
         RoboGuice.setUseAnnotationDatabases(false);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        Intent startChallengeIntent = new Intent(this, StartChallengeActivity.class);
-        startChallengeIntent.putExtra(Constants.CHALLENGE_EXTRA, intent);
-        startActivity(startChallengeIntent);
     }
 
     @Override
@@ -50,28 +74,36 @@ public class MainActivity extends RoboActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mEmulateNfcBtn.setOnClickListener(new View.OnClickListener() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN).build();
+
+        mSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String args = "MyWord|33.96482810963319|-118.30714412033558|6.589385";
-                Bitmap image = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-
-                NdefRecord imgRrd = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, ".png".getBytes(), null, stream.toByteArray());
-                NdefRecord argsRrd = NdefRecord.createMime("application/" + BuildConfig.APPLICATION_ID, args.getBytes());
-
-                NdefMessage msg = new NdefMessage(new NdefRecord[] {imgRrd, argsRrd});
-
-                Intent i = new Intent();
-                i.putExtra(NfcAdapter.EXTRA_NDEF_MESSAGES, new Parcelable[]{msg});
-
-                handleIntent(i);
+                if (!mGoogleApiClient.isConnecting()) {
+                    mSignInClicked = true;
+                    mGoogleApiClient.connect();
+                }
             }
         });
+
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -93,5 +125,61 @@ public class MainActivity extends RoboActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        mSignInClicked = false;
+        Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+        if (currentPerson != null) {
+            mCurrentUser = new UserInfo();
+            mCurrentUser.setId(currentPerson.getId());
+            mCurrentUser.setName(currentPerson.getDisplayName());
+            mCurrentUser.setEmail(Plus.AccountApi.getAccountName(mGoogleApiClient));
+        }
+        Plus.PeopleApi.loadVisible(mGoogleApiClient, null).setResultCallback(this);
+        Intent mainMenuIntent = new Intent(this, MainMenuActivity.class);
+        startActivity(mainMenuIntent);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if (!mIntentInProgress && mSignInClicked && connectionResult.hasResolution()) {
+            try {
+                mIntentInProgress = true;
+                connectionResult.startResolutionForResult(this, RC_SIGN_IN);
+            } catch (IntentSender.SendIntentException e) {
+                mIntentInProgress = false;
+                mGoogleApiClient.connect();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode != RESULT_OK) {
+                mSignInClicked = false;
+            }
+
+            mIntentInProgress = false;
+
+            if (!mGoogleApiClient.isConnected()) {
+                mGoogleApiClient.reconnect();
+            }
+        }
+    }
+
+    @Override
+    public void onResult(People.LoadPeopleResult peopleData) {
+        List<UserInfo> people = GooglePlusUtils.retrievePeople(peopleData);
+        mCurrentUser.setFriends(people);
+
+        geoHangmanService.storeCurrentUser(mCurrentUser);
     }
 }

@@ -19,4 +19,6 @@
     <string name="send_challenge_nfc">Send the Challenge thru NFC!</string>
     <string name="title_activity_start_challenge">StartChallengeActivity</string>
     <string name="title_activity_receive_challenge">RecieveChallengeActivity</string>
+    <string name="press_again_to_exit">Press again to exit</string>
+    <string name="title_activity_main_menu">MainMenu</string>
 </resources>

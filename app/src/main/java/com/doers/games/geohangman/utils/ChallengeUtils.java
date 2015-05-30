@@ -49,7 +49,7 @@ public final class ChallengeUtils {
         Challenge.MapPoint mapPoint = new Challenge.MapPoint();
 
         String []args = challengeArgs.split(StringUtils.REGEX_SEPARATOR);
-        challenge.setWord(args[0]);
+        challenge.setWord(args[0].toUpperCase());
         mapPoint.setLat(Double.parseDouble(args[1]));
         mapPoint.setLng(Double.parseDouble(args[2]));
         mapPoint.setZoom(Float.parseFloat(args[3]));
