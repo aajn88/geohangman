@@ -37,7 +37,16 @@ public final class Messages {
             "Retrieving friends " + "information for {Id = %s, Name = %s}";
 
     /** Retrieving friends information finished * */
-    public static final java.lang.String RETRIEVING_FRIENDS_INFORMATION_FINISH = "Retrieving friends information process has finished";
+    public static final String RETRIEVING_FRIENDS_INFORMATION_FINISH = "Retrieving friends information process has finished";
+
+    /** Error while sending data to server **/
+    public static final String SENDING_DATA_TO_SERVER_FAILED = "An error has occurred while sending data to server";
+
+    /** Response to Geohangman request **/
+    public static final String REQUEST_RESPONSE_TAG = "REQUEST_RESPONSE_TAG";
+
+    /** Server response **/
+    public static final String SERVER_RESPONSE = "Server response: %s";
 
 
     /** Private no-parameters constructor * */

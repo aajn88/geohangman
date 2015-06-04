@@ -6,8 +6,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.doers.games.geohangman.R;
-import com.doers.games.geohangman.custom_components.LetterButton;
-import com.doers.games.geohangman.custom_components.LetterButtonFactory;
+import com.doers.games.geohangman.view.LetterButton;
+import com.doers.games.geohangman.view.LetterButtonFactory;
 import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.doers.games.geohangman.utils.StringUtils;
 import com.google.inject.Inject;

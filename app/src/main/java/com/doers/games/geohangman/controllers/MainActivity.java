@@ -2,11 +2,13 @@ package com.doers.games.geohangman.controllers;
 
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.doers.games.geohangman.R;
 import com.doers.games.geohangman.constants.Messages;
@@ -22,6 +24,10 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.inject.Inject;
 
+import org.springframework.web.client.ResourceAccessException;
+
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import roboguice.RoboGuice;
@@ -63,7 +69,7 @@ public class MainActivity extends RoboActionBarActivity
     /** Current Session User * */
     private UserInfo mCurrentUser;
 
-    /** GeoHangman Main Service **/
+    /** GeoHangman Main Service * */
     @Inject
     private IGeoHangmanService geoHangmanService;
 
@@ -180,13 +186,54 @@ public class MainActivity extends RoboActionBarActivity
     @Override
     public void onResult(People.LoadPeopleResult peopleData) {
         Log.d(Messages.CIRCLES_PEOPLE_TAG,
-                String.format(Messages.RETRIEVING_FRIENDS_INFORMATION, mCurrentUser.getId()
-                        , mCurrentUser.getName()));
+                String.format(Messages.RETRIEVING_FRIENDS_INFORMATION, mCurrentUser.getId(),
+                        mCurrentUser.getName()));
         List<UserInfo> people = GooglePlusUtils.retrievePeople(peopleData);
         mCurrentUser.setFriends(people);
 
         Log.d(Messages.CIRCLES_PEOPLE_TAG, Messages.RETRIEVING_FRIENDS_INFORMATION_FINISH);
 
-        geoHangmanService.storeCurrentUser(mCurrentUser);
+        new SendUser2ServerAsyncTask().execute();
+    }
+
+    /**
+     * AsyncTask to send User to Server
+     */
+    private class SendUser2ServerAsyncTask extends AsyncTask<Void, Void, Boolean> {
+
+        /**
+         * Override this method to perform a computation on a background thread. The specified
+         * parameters are the parameters passed to {@link #execute} by the caller of this task.
+         * <p/>
+         * This method can call {@link #publishProgress} to publish updates on the UI thread.
+         *
+         * @param params The parameters of the task.
+         *
+         * @return A result, defined by the subclass of this task.
+         *
+         * @see #onPreExecute()
+         * @see #onPostExecute
+         * @see #publishProgress
+         */
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            boolean successful = Boolean.TRUE;
+            try {
+                geoHangmanService.storeCurrentUser(mCurrentUser);
+            } catch (IOException | NoSuchAlgorithmException | ResourceAccessException e) {
+                Log.e(Messages.ERROR, Messages.SENDING_DATA_TO_SERVER_FAILED, e);
+                successful = Boolean.FALSE;
+            }
+            return successful;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean successful) {
+            if (!successful) {
+                Toast.makeText(MainActivity.this, R.string.internet_connection_error,
+                        Toast.LENGTH_LONG).show();
+            }
+
+        }
     }
 }

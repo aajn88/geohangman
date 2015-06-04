@@ -1,4 +1,4 @@
-package com.doers.games.geohangman.custom_components;
+package com.doers.games.geohangman.view;
 
 import android.content.Context;
 import android.view.ViewGroup;

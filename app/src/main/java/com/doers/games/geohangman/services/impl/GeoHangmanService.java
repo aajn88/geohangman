@@ -9,9 +9,14 @@ import com.doers.games.geohangman.BuildConfig;
 import com.doers.games.geohangman.model.Challenge;
 import com.doers.games.geohangman.model.UserInfo;
 import com.doers.games.geohangman.services.IGeoHangmanService;
+import com.doers.games.geohangman.services.IServerClientService;
 import com.doers.games.geohangman.utils.ChallengeUtils;
 import com.doers.games.geohangman.utils.ImageUtils;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * This is the GeoHangman Main Service.
@@ -31,6 +36,9 @@ public class GeoHangmanService implements IGeoHangmanService {
 
     /** Current challenge to be sent * */
     private Challenge challenge;
+
+    @Inject
+    private IServerClientService serverClient;
 
     /**
      * GeoHangman no-parameters constructor
@@ -195,8 +203,9 @@ public class GeoHangmanService implements IGeoHangmanService {
      * @param currentUser to be stored
      */
     @Override
-    public void storeCurrentUser(UserInfo currentUser) {
-
+    public void storeCurrentUser(UserInfo currentUser) throws IOException,
+            NoSuchAlgorithmException {
+        serverClient.createOrUpdateUser(currentUser);
     }
 
 }

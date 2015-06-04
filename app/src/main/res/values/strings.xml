@@ -21,4 +21,6 @@
     <string name="title_activity_receive_challenge">RecieveChallengeActivity</string>
     <string name="press_again_to_exit">Press again to exit</string>
     <string name="title_activity_main_menu">MainMenu</string>
+    <string name="internet_connection_error">Seems like you're having trouble connecting to
+    internet</string>
 </resources>
