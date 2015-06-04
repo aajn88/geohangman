@@ -76,4 +76,13 @@ public class UserInfo {
     public void setFriends(List<UserInfo> friends) {
         this.friends = friends;
     }
+
+    @Override
+    public String toString() {
+        return "UserInfo{" +
+                "email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", id='" + id + '\'' +
+                '}';
+    }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.doers.games.geohangman.constants.ServerUrlTypes;
 import com.doers.games.geohangman.model.UserInfo;
+import com.doers.games.geohangman.model.restful.CreateUpdateFriendsRequest;
 import com.doers.games.geohangman.model.restful.CreateUpdateUserRequest;
 
 import org.apache.commons.codec.binary.Hex;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -73,6 +75,10 @@ public final class ServerClientServiceHelper {
             case CHALLENGES:
                 url.append(properties.getProperty(type.getProperty()));
                 break;
+            case FRIENDS:
+                url.append(properties.getProperty(ServerUrlTypes.USERS.getProperty()));
+                url.append(properties.getProperty(type.getProperty()));
+                break;
             default:
                 throw new IllegalArgumentException(String.format("Server Url Type not supported " +
                         "[%s]", type.name()));
@@ -81,6 +87,14 @@ public final class ServerClientServiceHelper {
         return url.toString();
     }
 
+    /**
+     * This method builds a Create/Update User Request
+     *
+     * @param userInfo the User to be wrapped in the request
+     * @param properties Properties
+     * @return Request
+     * @throws NoSuchAlgorithmException
+     */
     static CreateUpdateUserRequest buildUserRequest(UserInfo userInfo, Properties properties) throws
             NoSuchAlgorithmException {
         CreateUpdateUserRequest request = new CreateUpdateUserRequest();
@@ -88,6 +102,26 @@ public final class ServerClientServiceHelper {
         request.setTest(Boolean.FALSE);
         request.setSecurityKey(buildSecurityKey(properties));
         request.setUser(userInfo);
+
+        return request;
+    }
+
+    /**
+     * This method builds a Create/Update User Request
+     *
+     * @param friends the User's friends
+     * @param properties Properties
+     * @return Request
+     * @throws NoSuchAlgorithmException
+     */
+    static CreateUpdateFriendsRequest buildUserFriendsRequest(List<UserInfo> friends, Properties
+            properties) throws
+            NoSuchAlgorithmException {
+        CreateUpdateFriendsRequest request = new CreateUpdateFriendsRequest();
+
+        request.setTest(Boolean.FALSE);
+        request.setSecurityKey(buildSecurityKey(properties));
+        request.setFriends(friends);
 
         return request;
     }

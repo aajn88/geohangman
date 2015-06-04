@@ -14,7 +14,10 @@ public enum ServerUrlTypes {
     USERS("users.url"),
 
     /** Challenges URL * */
-    CHALLENGES("challenges.url");
+    CHALLENGES("challenges.url"),
+
+    /** Friends URL * */
+    FRIENDS("friends.url");
 
     private final String property;
 

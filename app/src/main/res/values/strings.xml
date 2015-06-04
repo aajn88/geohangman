@@ -16,11 +16,11 @@
     <string name="word_constraint">Spaces, special characters and numbers are not allowed</string>
     <string name="send_challenge">Send Challenge!</string>
     <string name="title_activity_send_challenge">SendChallengeActivity</string>
-    <string name="send_challenge_nfc">Send the Challenge thru NFC!</string>
+    <string name="send_challenge_nfc">Send the Challenge through NFC!</string>
     <string name="title_activity_start_challenge">StartChallengeActivity</string>
     <string name="title_activity_receive_challenge">RecieveChallengeActivity</string>
     <string name="press_again_to_exit">Press again to exit</string>
     <string name="title_activity_main_menu">MainMenu</string>
-    <string name="internet_connection_error">Seems like you're having trouble connecting to
+    <string name="internet_connection_error">Seems like you are having trouble connecting to
     internet</string>
 </resources>
