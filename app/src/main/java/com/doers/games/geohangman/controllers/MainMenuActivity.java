@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.doers.games.geohangman.BuildConfig;
 import com.doers.games.geohangman.R;
 import com.doers.games.geohangman.constants.Constants;
+import com.doers.games.geohangman.controllers.challenger_activities.TakePicActivity;
+import com.doers.games.geohangman.controllers.opponent_activities.StartChallengeActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.util.GregorianCalendar;

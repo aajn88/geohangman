@@ -22,13 +22,26 @@ public final class RestUtils {
      *
      * @param url The URL where GET request will be done.
      * @param responseClass Expected response class
+     * @param <T> Expected return class
+     * @return Get method response
+     */
+    public static <T> T get(String url, Class<T> responseClass) {
+        return get(url, responseClass, null);
+    }
+
+    /**
+     * Given a URL, a Class Type and a map with variables, this method performs GET method
+     * request to the given url
+     *
+     * @param url The URL where GET request will be done.
+     * @param responseClass Expected response class
      * @param urlVariables Url Variables
      * @param <T> Expected return class
      * @return Get method response
      */
     public static <T> T get(String url, Class<T> responseClass, Map<String, ?> urlVariables) {
         RestTemplate template = getRestTemplate();
-        return template.getForObject(url, responseClass, urlVariables);
+        return (urlVariables != null ? template.getForObject(url, responseClass, urlVariables) : template.getForObject(url, responseClass));
     }
 
     /**

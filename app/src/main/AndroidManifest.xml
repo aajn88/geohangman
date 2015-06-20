@@ -38,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".controllers.TakePicActivity"
+            android:name=".controllers.challenger_activities.TakePicActivity"
             android:label="@string/title_activity_take_pic"
             android:parentActivityName="roboguice.activity.RoboActivity" >
             <meta-data
@@ -57,19 +57,19 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".controllers.SelectLocationHintActivity"
+            android:name=".controllers.challenger_activities.SelectLocationHintActivity"
             android:label="@string/title_activity_maps" >
         </activity>
         <activity
-            android:name=".controllers.TypeWordActivity"
+            android:name=".controllers.challenger_activities.TypeWordActivity"
             android:label="@string/title_activity_type_word" >
         </activity>
         <activity
-            android:name=".controllers.SendChallengeActivity"
+            android:name=".controllers.challenger_activities.SendChallengeActivity"
             android:label="@string/title_activity_send_challenge" >
         </activity>
         <activity
-            android:name=".controllers.StartChallengeActivity"
+            android:name=".controllers.opponent_activities.StartChallengeActivity"
             android:label="@string/title_activity_start_challenge" >
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
@@ -82,6 +82,14 @@
         <activity
             android:name=".controllers.MainMenuActivity"
             android:label="@string/title_activity_main_menu"
+            android:parentActivityName="roboguice.activity.RoboActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="roboguice.activity.RoboActivity" />
+        </activity>
+        <activity
+            android:name=".controllers.challenger_activities.SelectOpponentActivity"
+            android:label="@string/title_activity_select_opponent"
             android:parentActivityName="roboguice.activity.RoboActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -4,10 +4,6 @@ import android.graphics.Bitmap;
 import android.nfc.NdefMessage;
 
 import com.doers.games.geohangman.model.Challenge;
-import com.doers.games.geohangman.model.UserInfo;
-
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * This is the GeoHangman main Interface. This interface has all main services of GeoHangman.
@@ -100,12 +96,5 @@ public interface IGeoHangmanService {
      * This method restarts all challenge
      */
     void restartAll();
-
-    /**
-     * This method stores current User. It sends it to GeoHangman Server to store it
-     *
-     * @param currentUser to be stored
-     */
-    void storeCurrentUser(UserInfo currentUser) throws IOException, NoSuchAlgorithmException;
 
 }

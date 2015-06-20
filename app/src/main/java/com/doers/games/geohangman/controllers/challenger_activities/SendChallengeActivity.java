@@ -1,4 +1,4 @@
-package com.doers.games.geohangman.controllers;
+package com.doers.games.geohangman.controllers.challenger_activities;
 
 import android.app.ProgressDialog;
 import android.nfc.NfcAdapter;

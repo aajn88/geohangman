@@ -17,7 +17,13 @@ public enum ServerUrlTypes {
     CHALLENGES("challenges.url"),
 
     /** Friends URL * */
-    FRIENDS("friends.url");
+    FRIENDS("friends.url"),
+
+    /** Registered Friends URL * */
+    REGISTERED_FRIENDS("registered_friends.url"),
+
+    /** Google Profile Picture URL * */
+    GOOGLE_PROFILE_PICTURE("google.profile.picture.url");
 
     private final String property;
 

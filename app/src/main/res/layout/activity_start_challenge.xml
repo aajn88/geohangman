@@ -5,7 +5,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="com.doers.games.geohangman.controllers.StartChallengeActivity">
+    tools:context="com.doers.games.geohangman.controllers.opponent_activities.StartChallengeActivity">
 
     <LinearLayout
         android:orientation="horizontal"

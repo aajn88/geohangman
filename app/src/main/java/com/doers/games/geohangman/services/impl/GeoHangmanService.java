@@ -7,16 +7,10 @@ import android.os.Build;
 
 import com.doers.games.geohangman.BuildConfig;
 import com.doers.games.geohangman.model.Challenge;
-import com.doers.games.geohangman.model.UserInfo;
 import com.doers.games.geohangman.services.IGeoHangmanService;
-import com.doers.games.geohangman.services.IServerClientService;
 import com.doers.games.geohangman.utils.ChallengeUtils;
 import com.doers.games.geohangman.utils.ImageUtils;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * This is the GeoHangman Main Service.
@@ -28,17 +22,11 @@ import java.security.NoSuchAlgorithmException;
 @Singleton
 public class GeoHangmanService implements IGeoHangmanService {
 
-    /** Image/png constant string * */
-    private static final String IMAGE_PNG = "image/png";
-
     /** Application tag for beam * */
     private static final String APPLICATION_TAG = "application/";
 
     /** Current challenge to be sent * */
     private Challenge challenge;
-
-    @Inject
-    private IServerClientService serverClient;
 
     /**
      * GeoHangman no-parameters constructor
@@ -195,17 +183,6 @@ public class GeoHangmanService implements IGeoHangmanService {
     @Override
     public void restartAll() {
         this.challenge = new Challenge();
-    }
-
-    /**
-     * This method stores current User. It sends it to GeoHangman Server to store it
-     *
-     * @param currentUser to be stored
-     */
-    @Override
-    public void storeCurrentUser(UserInfo currentUser) throws IOException,
-            NoSuchAlgorithmException {
-        serverClient.createOrUpdateUser(currentUser);
     }
 
 }

@@ -21,10 +21,13 @@ import java.util.Properties;
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
-public final class ServerClientServiceHelper {
+final class ServerClientServiceHelper {
 
     /** Secure Key **/
     private static final String SECURE_KEY = "secure.key";
+
+    /** Browser Key **/
+    private static final String BROWSER_KEY = "browser.key";
 
     /** Secure Param 1 **/
     private static final String PARAM1 = "secure.param1";
@@ -73,11 +76,16 @@ public final class ServerClientServiceHelper {
                 break;
             case USERS:
             case CHALLENGES:
+            case REGISTERED_FRIENDS:
                 url.append(properties.getProperty(type.getProperty()));
                 break;
             case FRIENDS:
                 url.append(properties.getProperty(ServerUrlTypes.USERS.getProperty()));
                 url.append(properties.getProperty(type.getProperty()));
+                break;
+            case GOOGLE_PROFILE_PICTURE:
+                url = new StringBuilder(properties.getProperty(type.getProperty()));
+                url.append(properties.getProperty(BROWSER_KEY));
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Server Url Type not supported " +

@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.doers.games.geohangman.R;
 import com.doers.games.geohangman.constants.Messages;
 import com.doers.games.geohangman.model.UserInfo;
-import com.doers.games.geohangman.services.IGeoHangmanService;
+import com.doers.games.geohangman.services.IUsersService;
 import com.doers.games.geohangman.utils.GooglePlusUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
@@ -69,9 +69,9 @@ public class MainActivity extends RoboActionBarActivity
     /** Current Session User * */
     private UserInfo mCurrentUser;
 
-    /** GeoHangman Main Service * */
+    /** Geohangman Users Service * */
     @Inject
-    private IGeoHangmanService geoHangmanService;
+    private IUsersService usersService;
 
     static {
         RoboGuice.setUseAnnotationDatabases(false);
@@ -219,7 +219,7 @@ public class MainActivity extends RoboActionBarActivity
         protected Boolean doInBackground(Void... params) {
             boolean successful = Boolean.TRUE;
             try {
-                geoHangmanService.storeCurrentUser(mCurrentUser);
+                usersService.storeCurrentUser(mCurrentUser);
             } catch (IOException | NoSuchAlgorithmException | ResourceAccessException e) {
                 Log.e(Messages.ERROR, Messages.SENDING_DATA_TO_SERVER_FAILED, e);
                 successful = Boolean.FALSE;
