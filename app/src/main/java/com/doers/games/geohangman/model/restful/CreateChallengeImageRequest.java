@@ -13,7 +13,7 @@ public class CreateChallengeImageRequest extends AbstractRequest {
 	private Integer challengeId;
 
 	/** The image bytes **/
-	private byte[] imageBytes;
+	private String imageBytes;
 
 	/**
 	 * @return the challengeId
@@ -33,7 +33,7 @@ public class CreateChallengeImageRequest extends AbstractRequest {
 	/**
 	 * @return the imageBytes
 	 */
-	public byte[] getImageBytes() {
+	public String getImageBytes() {
 		return imageBytes;
 	}
 
@@ -41,7 +41,7 @@ public class CreateChallengeImageRequest extends AbstractRequest {
 	 * @param imageBytes
 	 *            the imageBytes to set
 	 */
-	public void setImageBytes(byte[] imageBytes) {
+	public void setImageBytes(String imageBytes) {
 		this.imageBytes = imageBytes;
 	}
 

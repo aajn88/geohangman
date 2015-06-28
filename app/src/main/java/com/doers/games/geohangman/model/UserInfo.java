@@ -1,5 +1,6 @@
 package com.doers.games.geohangman.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
-public class UserInfo {
+public class UserInfo implements Serializable {
 
     /** User's Google Id (GeoHangman Id) * */
     private String id;

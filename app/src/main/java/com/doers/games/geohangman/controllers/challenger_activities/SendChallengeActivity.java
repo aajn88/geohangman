@@ -1,40 +1,50 @@
 package com.doers.games.geohangman.controllers.challenger_activities;
 
 import android.app.ProgressDialog;
-import android.nfc.NfcAdapter;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.doers.games.geohangman.R;
+import com.doers.games.geohangman.constants.Constants;
 import com.doers.games.geohangman.constants.Messages;
+import com.doers.games.geohangman.model.UserInfo;
 import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.google.inject.Inject;
 
+import java.io.IOException;
+
 import roboguice.activity.RoboActionBarActivity;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectResource;
 
 /**
  * This class sends the Challenge through NFC to User's Opponent
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
+@ContentView(R.layout.activity_send_challenge)
 public class SendChallengeActivity extends RoboActionBarActivity {
 
-    /** NFC Adapter **/
-    private NfcAdapter mNfcAdapter;
-
+    /** The GeoHangman Service * */
     @Inject
     private IGeoHangmanService geoHangmanService;
+
+    /** Error while creating challenge message * */
+    @InjectResource(R.string.error_creating_challenge)
+    private String mErrorCreatingChallengeMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_challenge);
-
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-
-        new BuildNdefAsync().execute();
+        Intent recievedIntent = getIntent();
+        UserInfo opponent = (UserInfo) recievedIntent
+                .getSerializableExtra(Constants.SELECTED_OPPONENT_EXTRA);
+        new SendChallengeAsyncTask(opponent.getId()).execute();
     }
 
     @Override
@@ -59,25 +69,46 @@ public class SendChallengeActivity extends RoboActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class BuildNdefAsync extends AsyncTask<Void, Void, Void> {
+    private class SendChallengeAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
+        /** The opponent Id * */
+        private String opponentId;
+
+        /** Progress Dialog * */
         private ProgressDialog progress;
+
+        /**
+         * Constructor given an opponent Id
+         *
+         * @param opponentId The opponent Id
+         */
+        private SendChallengeAsyncTask(String opponentId) {
+            this.opponentId = opponentId;
+        }
 
         @Override
         protected void onPreExecute() {
-            super.onPreExecute();
             progress = ProgressDialog.show(SendChallengeActivity.this, "", Messages.LOADING);
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            mNfcAdapter.setNdefPushMessage(geoHangmanService.buildNdefMessage(), SendChallengeActivity.this);
-            return null;
+        protected Boolean doInBackground(Void... params) {
+            Boolean success = Boolean.TRUE;
+            try {
+                geoHangmanService.sendChallengeToOpponent(opponentId);
+            } catch (IOException e) {
+                Log.e(Messages.ERROR, mErrorCreatingChallengeMsg, e);
+                success = Boolean.FALSE;
+            }
+            return success;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean success) {
+            if (!success) {
+                Toast.makeText(SendChallengeActivity.this, R.string.internet_connection_error,
+                        Toast.LENGTH_SHORT).show();
+            }
             progress.dismiss();
         }
     }

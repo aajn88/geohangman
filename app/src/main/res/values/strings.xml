@@ -24,4 +24,12 @@
     <string name="internet_connection_error">Seems like you are having trouble connecting to
     internet</string>
     <string name="title_activity_select_opponent">SelectOpponentActivity</string>
+    <string name="sending_challenge_opponent_alert_dialog_title">Sending challenge</string>
+    <string name="sending_challenge_opponent_alert_dialog_msg">Do you want to send this
+        challenge to %s?</string>
+    <string name="error_loading_user_friends">An error has occurred while loading user\'s
+        friends</string>
+    <string name="error_creating_challenge">An error has occurred while creating challenge</string>
+    <string name="yes_text">Yes</string>
+    <string name="no_text">No</string>
 </resources>

@@ -1,11 +1,16 @@
 package com.doers.games.geohangman.services.impl;
 
 import android.content.Context;
+import android.util.Base64;
 
 import com.doers.games.geohangman.constants.ServerUrlTypes;
+import com.doers.games.geohangman.model.Challenge;
 import com.doers.games.geohangman.model.UserInfo;
+import com.doers.games.geohangman.model.restful.CreateChallengeImageRequest;
+import com.doers.games.geohangman.model.restful.CreateChallengeRequest;
 import com.doers.games.geohangman.model.restful.CreateUpdateFriendsRequest;
 import com.doers.games.geohangman.model.restful.CreateUpdateUserRequest;
+import com.doers.games.geohangman.utils.ImageUtils;
 
 import org.apache.commons.codec.binary.Hex;
 
@@ -23,22 +28,22 @@ import java.util.Properties;
  */
 final class ServerClientServiceHelper {
 
-    /** Secure Key **/
+    /** Secure Key * */
     private static final String SECURE_KEY = "secure.key";
 
-    /** Browser Key **/
+    /** Browser Key * */
     private static final String BROWSER_KEY = "browser.key";
 
-    /** Secure Param 1 **/
+    /** Secure Param 1 * */
     private static final String PARAM1 = "secure.param1";
 
-    /** Secure Param 2 **/
+    /** Secure Param 2 * */
     private static final String PARAM2 = "secure.param2";
 
-    /** Separator used for codec **/
+    /** Separator used for codec * */
     private static final String SEPARATOR = ":";
 
-    /** Algorithm **/
+    /** Algorithm * */
     private static final String ALGORITHM = "SHA-1";
 
     /** Properties File Charset * */
@@ -76,6 +81,8 @@ final class ServerClientServiceHelper {
                 break;
             case USERS:
             case CHALLENGES:
+            case CHALLENGES_IMAGE:
+            case REQUEST_CHALLENGES_IMAGE:
             case REGISTERED_FRIENDS:
                 url.append(properties.getProperty(type.getProperty()));
                 break;
@@ -88,8 +95,8 @@ final class ServerClientServiceHelper {
                 url.append(properties.getProperty(BROWSER_KEY));
                 break;
             default:
-                throw new IllegalArgumentException(String.format("Server Url Type not supported " +
-                        "[%s]", type.name()));
+                throw new IllegalArgumentException(
+                        String.format("Server Url Type not supported [%s]", type.name()));
         }
 
         return url.toString();
@@ -98,9 +105,11 @@ final class ServerClientServiceHelper {
     /**
      * This method builds a Create/Update User Request
      *
-     * @param userInfo the User to be wrapped in the request
+     * @param userInfo   the User to be wrapped in the request
      * @param properties Properties
+     *
      * @return Request
+     *
      * @throws NoSuchAlgorithmException
      */
     static CreateUpdateUserRequest buildUserRequest(UserInfo userInfo, Properties properties) throws
@@ -117,13 +126,15 @@ final class ServerClientServiceHelper {
     /**
      * This method builds a Create/Update User Request
      *
-     * @param friends the User's friends
+     * @param friends    the User's friends
      * @param properties Properties
+     *
      * @return Request
+     *
      * @throws NoSuchAlgorithmException
      */
-    static CreateUpdateFriendsRequest buildUserFriendsRequest(List<UserInfo> friends, Properties
-            properties) throws
+    static CreateUpdateFriendsRequest buildUserFriendsRequest(List<UserInfo> friends,
+                                                              Properties properties) throws
             NoSuchAlgorithmException {
         CreateUpdateFriendsRequest request = new CreateUpdateFriendsRequest();
 
@@ -135,16 +146,60 @@ final class ServerClientServiceHelper {
     }
 
     /**
+     * This method builds a CreateChallengeRequest given a Challenge. This challenge request does
+     * not include the challenge image.
+     *
+     * @param challenge    The given challenge to create its request
+     * @param challengerId The challenger Id
+     * @param opponentId   The opponent Id
+     *
+     * @return Challenge request
+     */
+    static CreateChallengeRequest buildCreateChallengeRequest(Challenge challenge,
+                                                              String challengerId,
+                                                              String opponentId) {
+        CreateChallengeRequest request = new CreateChallengeRequest();
+
+        request.setChallengerId(challengerId);
+        request.setOpponentId(opponentId);
+        request.setWord(challenge.getWord());
+        Challenge.MapPoint mp = challenge.getMapPoint();
+        request.setLat(mp.getLat());
+        request.setLng(mp.getLng());
+        request.setZoom(mp.getZoom());
+
+        return request;
+    }
+
+    /**
+     * This method creates a Create Challenge Image request to be sent to the server
+     *
+     * @param challenge The challenge where image to be sent will be extracted
+     *
+     * @return Create Challenge Image request
+     */
+    static CreateChallengeImageRequest buildCreateImageChallengeRequest(Challenge challenge) {
+        CreateChallengeImageRequest request = new CreateChallengeImageRequest();
+        request.setChallengeId(challenge.getId());
+        String encodedImage = Base64
+                .encodeToString(ImageUtils.buildBitmapByteArray(challenge.getPic()),
+                        Base64.DEFAULT);
+        request.setImageBytes(encodedImage);
+
+        return request;
+    }
+
+    /**
      * Builds Security key
      *
      * @return Build security key
+     *
      * @throws NoSuchAlgorithmException
      */
     private static String buildSecurityKey(Properties properties) throws NoSuchAlgorithmException {
         StringBuilder sb = new StringBuilder();
-        sb.append(properties.get(SECURE_KEY)).append(SEPARATOR).append(properties.get(PARAM1)).append
-                (SEPARATOR)
-                .append(properties.get(PARAM2));
+        sb.append(properties.get(SECURE_KEY)).append(SEPARATOR).append(properties.get(PARAM1))
+                .append(SEPARATOR).append(properties.get(PARAM2));
 
         MessageDigest cript = MessageDigest.getInstance(ALGORITHM);
         cript.reset();

@@ -16,6 +16,12 @@ public enum ServerUrlTypes {
     /** Challenges URL * */
     CHALLENGES("challenges.url"),
 
+    /** Challenges Image URL * */
+    REQUEST_CHALLENGES_IMAGE("request_challenges_image.url"),
+
+    /** Challenges Image URL * */
+    CHALLENGES_IMAGE("challenges_image.url"),
+
     /** Friends URL * */
     FRIENDS("friends.url"),
 

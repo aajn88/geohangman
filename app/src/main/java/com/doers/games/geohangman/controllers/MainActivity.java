@@ -45,37 +45,32 @@ public class MainActivity extends RoboActionBarActivity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<People.LoadPeopleResult> {
 
-    /** G+ sign-in button * */
-    @InjectView(R.id.signInButton)
-    private SignInButton mSignInButton;
-
     /* Request code used to invoke sign in user interactions. */
     private static final int RC_SIGN_IN = 0;
 
+    static {
+        RoboGuice.setUseAnnotationDatabases(false);
+    }
+
+    /** G+ sign-in button * */
+    @InjectView(R.id.signInButton)
+    private SignInButton mSignInButton;
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
-
     /* A flag indicating that a PendingIntent is in progress and prevents
      * us from starting further intents.
      */
     private boolean mIntentInProgress;
-
     /**
      * True if the sign-in button was clicked.  When true, we know to resolve all issues preventing
      * sign-in without waiting.
      */
     private boolean mSignInClicked;
-
     /** Current Session User * */
     private UserInfo mCurrentUser;
-
     /** Geohangman Users Service * */
     @Inject
     private IUsersService usersService;
-
-    static {
-        RoboGuice.setUseAnnotationDatabases(false);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,8 +141,6 @@ public class MainActivity extends RoboActionBarActivity
             mCurrentUser.setEmail(Plus.AccountApi.getAccountName(mGoogleApiClient));
         }
         Plus.PeopleApi.loadVisible(mGoogleApiClient, null).setResultCallback(this);
-        Intent mainMenuIntent = new Intent(this, MainMenuActivity.class);
-        startActivity(mainMenuIntent);
     }
 
     @Override
@@ -194,6 +187,9 @@ public class MainActivity extends RoboActionBarActivity
         Log.d(Messages.CIRCLES_PEOPLE_TAG, Messages.RETRIEVING_FRIENDS_INFORMATION_FINISH);
 
         new SendUser2ServerAsyncTask().execute();
+
+        Intent mainMenuIntent = new Intent(this, MainMenuActivity.class);
+        startActivity(mainMenuIntent);
     }
 
     /**

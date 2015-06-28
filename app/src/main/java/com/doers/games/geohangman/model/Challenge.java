@@ -9,6 +9,9 @@ import android.graphics.Bitmap;
  */
 public class Challenge {
 
+    /** Challenge Id * */
+    private Integer id;
+
     /** Pic taken * */
     private Bitmap pic;
 
@@ -17,6 +20,20 @@ public class Challenge {
 
     /** Map Point * */
     private MapPoint mapPoint;
+
+    /**
+     * @return the id
+     */
+    public Integer getId() {
+        return id;
+    }
+
+    /**
+     * @return id the id to set
+     */
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     /**
      * @return the pic

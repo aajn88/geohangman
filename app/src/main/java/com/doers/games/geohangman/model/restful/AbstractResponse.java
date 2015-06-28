@@ -6,7 +6,7 @@ import com.doers.games.geohangman.constants.ResponseCode;
  * @author @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  *
  */
-public class AbstractResponse {
+public abstract class AbstractResponse {
 
 	private ResponseCode responseCode;
 

@@ -7,10 +7,17 @@ import android.os.Build;
 
 import com.doers.games.geohangman.BuildConfig;
 import com.doers.games.geohangman.model.Challenge;
+import com.doers.games.geohangman.model.restful.CreateChallengeResponse;
+import com.doers.games.geohangman.model.restful.GetChallengeImageResponse;
 import com.doers.games.geohangman.services.IGeoHangmanService;
+import com.doers.games.geohangman.services.IServerClientService;
+import com.doers.games.geohangman.services.IUsersService;
 import com.doers.games.geohangman.utils.ChallengeUtils;
 import com.doers.games.geohangman.utils.ImageUtils;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import java.io.IOException;
 
 /**
  * This is the GeoHangman Main Service.
@@ -27,6 +34,14 @@ public class GeoHangmanService implements IGeoHangmanService {
 
     /** Current challenge to be sent * */
     private Challenge challenge;
+
+    /** The server client service * */
+    @Inject
+    private IServerClientService serverClientService;
+
+    /** The users service * */
+    @Inject
+    private IUsersService usersService;
 
     /**
      * GeoHangman no-parameters constructor
@@ -183,6 +198,31 @@ public class GeoHangmanService implements IGeoHangmanService {
     @Override
     public void restartAll() {
         this.challenge = new Challenge();
+    }
+
+    /**
+     * This method sends the challenge to a given opponent. This challenge is sent to the server and
+     * the server stores the challenge and notify opponent about the challenge
+     *
+     * @param opponentId The opponent Id
+     */
+    @Override
+    public void sendChallengeToOpponent(String opponentId) throws IOException {
+        CreateChallengeResponse response = serverClientService
+                .createChallenge(challenge, usersService.getCurrentUser().getId(), opponentId);
+    }
+
+    /**
+     * This method requests challenge image from server given a challengeId
+     *
+     * @param challengeId The challenge Id
+     *
+     * @return Respective challenge image
+     */
+    @Override
+    public byte[] requestChallengeImage(Integer challengeId) throws IOException {
+        GetChallengeImageResponse response = serverClientService.getChallengeImage(challengeId);
+        return response.getImageBytes().getBytes();
     }
 
 }

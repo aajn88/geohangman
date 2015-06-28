@@ -5,6 +5,8 @@ import android.nfc.NdefMessage;
 
 import com.doers.games.geohangman.model.Challenge;
 
+import java.io.IOException;
+
 /**
  * This is the GeoHangman main Interface. This interface has all main services of GeoHangman.
  *
@@ -96,5 +98,22 @@ public interface IGeoHangmanService {
      * This method restarts all challenge
      */
     void restartAll();
+
+    /**
+     *
+     * This method sends the challenge to a given opponent. This challenge is sent to the server
+     * and the server stores the challenge and notify opponent about the challenge
+     *
+     * @param opponentId The opponent Id
+     */
+    void sendChallengeToOpponent(String opponentId) throws IOException;
+
+    /**
+     * This method requests challenge image from server given a challengeId
+     *
+     * @param challengeId The challenge Id
+     * @return Respective challenge image
+     */
+    byte[] requestChallengeImage(Integer challengeId) throws IOException;
 
 }

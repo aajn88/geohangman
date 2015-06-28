@@ -8,6 +8,7 @@ import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.inject.Inject;
 
+import java.io.IOException;
 import java.util.GregorianCalendar;
 
 import roboguice.activity.RoboActionBarActivity;
@@ -38,24 +40,19 @@ import roboguice.inject.InjectView;
  */
 public class StartChallengeActivity extends RoboActionBarActivity {
 
+    private static final Long THRESHOLD = 1000l;
     /** GeoHangman main service * */
     @Inject
     private IGeoHangmanService geoHangmanService;
-
     /** Challenge Pic ImageView * */
     @InjectView(R.id.challengePicIv)
     private ImageView mChallengePicIv;
-
     @Inject
     private StartChallengeActivityHelper startChallengeHelper;
-
     /** Google Map * */
     private GoogleMap mMap;
-
     /** Last time Back button was pressed * */
     private GregorianCalendar lastBackPressed = null;
-
-    private static final Long THRESHOLD = 1000l;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +116,8 @@ public class StartChallengeActivity extends RoboActionBarActivity {
      */
     private void setUpMap() {
         if (mMap == null) {
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment)).getMap();
+            mMap = ((SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.mapFragment)).getMap();
         }
 
         if (mMap != null) {
@@ -181,7 +179,13 @@ public class StartChallengeActivity extends RoboActionBarActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            geoHangmanService.startChallenge(image, challengeArgs);
+            try {
+                byte[] image = geoHangmanService.requestChallengeImage(262145);
+                geoHangmanService.startChallenge(image, challengeArgs);
+            } catch (IOException e) {
+                Log.e(Messages.ERROR, "An error has occurred when Image was requested to server",
+                        e);
+            }
             return null;
         }
 

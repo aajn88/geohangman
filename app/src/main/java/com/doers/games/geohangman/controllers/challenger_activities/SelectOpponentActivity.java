@@ -1,24 +1,33 @@
 package com.doers.games.geohangman.controllers.challenger_activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.doers.games.geohangman.R;
+import com.doers.games.geohangman.constants.Constants;
 import com.doers.games.geohangman.constants.Messages;
 import com.doers.games.geohangman.model.UserInfo;
+import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.doers.games.geohangman.services.IUsersService;
 import com.google.inject.Inject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import roboguice.activity.RoboActionBarActivity;
+import roboguice.inject.InjectResource;
 import roboguice.inject.InjectView;
 
 /**
@@ -32,7 +41,31 @@ public class SelectOpponentActivity extends RoboActionBarActivity {
     @Inject
     private IUsersService usersService;
 
-    /** The users List View **/
+    /** The GeoHangman Main Services * */
+    @Inject
+    private IGeoHangmanService geoHangmanService;
+
+    /** Yes text * */
+    @InjectResource(R.string.yes_text)
+    private String mYesText;
+
+    /** No text * */
+    @InjectResource(R.string.no_text)
+    private String mNoText;
+
+    /** Sending Challenge Alert Dialog title * */
+    @InjectResource(R.string.sending_challenge_opponent_alert_dialog_title)
+    private String mSendingChallengeAlertTitle;
+
+    /** Sending Challenge Alert Dialog message * */
+    @InjectResource(R.string.sending_challenge_opponent_alert_dialog_msg)
+    private String mSendingChallengeAlertMsg;
+
+    /** Sending Challenge Alert Dialog message * */
+    @InjectResource(R.string.error_loading_user_friends)
+    private String mErrorLoadingUserFriends;
+
+    /** The users List View * */
     @InjectView(R.id.usersLv)
     private ListView mUsersLv;
     
@@ -41,7 +74,7 @@ public class SelectOpponentActivity extends RoboActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_opponent);
 
-        new LoadUserFriendsAsyncTask(usersService.getCurrentUser()).execute();
+        new LoadUserFriendsAsyncTask().execute();
     }
     
     @Override
@@ -67,24 +100,22 @@ public class SelectOpponentActivity extends RoboActionBarActivity {
     }
 
     /**
+     * This method initiates SendChallengeActivity to send the challenge to a given opponent (a
+     * User's friend)
+     */
+    private void sendChallengeToOpponent(UserInfo selectedFriend) {
+        Intent sendChallengeIntent = new Intent(this, SendChallengeActivity.class);
+        sendChallengeIntent.putExtra(Constants.SELECTED_OPPONENT_EXTRA, (Serializable) selectedFriend);
+        startActivity(sendChallengeIntent);
+    }
+
+    /**
      * This Async Task loads all User Friends information and display their information
      */
     private class LoadUserFriendsAsyncTask extends AsyncTask<Void, Void, List<UserInfo>> {
 
-        /** Current User * */
-        private UserInfo currentUser;
-
         /** Progress Dialog * */
         private ProgressDialog progress;
-
-        /**
-         * Constructor with current user in session
-         *
-         * @param currentUser The current user in session
-         */
-        public LoadUserFriendsAsyncTask(UserInfo currentUser) {
-            this.currentUser = currentUser;
-        }
 
         @Override
         protected void onPreExecute() {
@@ -111,29 +142,52 @@ public class SelectOpponentActivity extends RoboActionBarActivity {
             List<UserInfo> friends = null;
 
             try {
-                friends = usersService
-                        .getRegisteredFriends(usersService.getCurrentUser().getId());
+                friends = usersService.getRegisteredFriends(usersService.getCurrentUser().getId());
 
-                Log.d("REGISTERED_FRIENDS", friends.toString());
+                Log.d(Messages.REGISTERED_FRIENDS_TAG, friends.toString());
 
             } catch (IOException e) {
-                Log.e(Messages.ERROR, "Error retrieving registered friends", e);
+                Log.e(Messages.ERROR, mErrorLoadingUserFriends, e);
             }
 
             return friends;
         }
 
         @Override
-        protected void onPostExecute(List<UserInfo> friends) {
-            if(friends != null) {
+        protected void onPostExecute(final List<UserInfo> friends) {
+            if (friends != null) {
                 final UsersListAdapter adapter = new UsersListAdapter(SelectOpponentActivity
                         .this, friends, usersService);
                 mUsersLv.setAdapter(adapter);
+                mUsersLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position,
+                                            long id) {
+                        final UserInfo selectedFriend = friends.get(position);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(
+                                SelectOpponentActivity.this);
+                        builder.setTitle(mSendingChallengeAlertTitle);
+                        builder.setInverseBackgroundForced(Boolean.TRUE);
+                        builder.setMessage(
+                                String.format(mSendingChallengeAlertMsg, selectedFriend.getName()));
+                        builder.setNegativeButton(mNoText, null);
+                        builder.setPositiveButton(mYesText, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                sendChallengeToOpponent(selectedFriend);
+                            }
+                        });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+                });
             } else {
-                Toast.makeText(SelectOpponentActivity.this, "An error has occurred while loading " +
-                        "user's friends", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SelectOpponentActivity.this, R.string.error_loading_user_friends,
+                        Toast.LENGTH_SHORT).show();
             }
             progress.dismiss();
         }
     }
+
+
 }

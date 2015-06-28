@@ -1,6 +1,9 @@
 package com.doers.games.geohangman.services;
 
+import com.doers.games.geohangman.model.Challenge;
 import com.doers.games.geohangman.model.UserInfo;
+import com.doers.games.geohangman.model.restful.CreateChallengeResponse;
+import com.doers.games.geohangman.model.restful.GetChallengeImageResponse;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -36,5 +39,24 @@ public interface IServerClientService {
      * @return Profile Picture URL
      */
     String getGoogleProfilePicUrl(String userId) throws IOException;
+
+    /**
+     * This method sends a create challenge request to the server. Then its response is returned
+     *
+     * @param challenge The challenge to be sent
+     * @param challengerId The challenger Id
+     * @param opponentId The target opponent who will receive the challenge
+     * @return Server's response
+     */
+    CreateChallengeResponse createChallenge(Challenge challenge, String challengerId, String
+                                                   opponentId) throws IOException;
+
+    /**
+     * This method gets the challenge image given a challengeId
+     *
+     * @param challengeId The challengeId
+     * @return The server response for GetChallengeImage request
+     */
+    GetChallengeImageResponse getChallengeImage(Integer challengeId) throws IOException;
 
 }
