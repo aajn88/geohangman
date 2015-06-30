@@ -1,4 +1,4 @@
-package com.doers.games.geohangman.custom_components;
+package com.doers.games.geohangman.view;
 
 import android.content.Context;
 import android.view.ViewGroup;
@@ -9,7 +9,7 @@ import android.view.ViewGroup;
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
-public class LetterButtonFactory {
+public final class LetterButtonFactory {
 
     /** Space Char for LetterButton **/
     static final Character SPACE_CHAR = ' ';
@@ -19,6 +19,9 @@ public class LetterButtonFactory {
 
     /** Default width for LetterButton **/
     private static final Integer WIDTH_LETTER_BUTTON = 120;
+
+    /** Private no-parameters constructor **/
+    private LetterButtonFactory(){}
 
     /**
      * This is the LetterButton factory for an Empty LetterButton

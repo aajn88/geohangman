@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/notice.txt'
+    }
 }
 
 dependencies {
@@ -26,4 +30,12 @@ dependencies {
     compile 'org.roboguice:roboguice:3.0'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.google.android.gms:play-services:7.3.0'
+    compile 'org.springframework.android:spring-android-rest-template:2.0.0.M1'
+    compile 'commons-codec:commons-codec:1.10'
+}
+
+repositories {
+    maven {
+        url 'http://repo.spring.io/milestone'
+    }
 }

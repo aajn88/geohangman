@@ -16,7 +16,20 @@
     <string name="word_constraint">Spaces, special characters and numbers are not allowed</string>
     <string name="send_challenge">Send Challenge!</string>
     <string name="title_activity_send_challenge">SendChallengeActivity</string>
-    <string name="send_challenge_nfc">Send the Challenge thru NFC!</string>
+    <string name="send_challenge_nfc">Send the Challenge through NFC!</string>
     <string name="title_activity_start_challenge">StartChallengeActivity</string>
     <string name="title_activity_receive_challenge">RecieveChallengeActivity</string>
+    <string name="press_again_to_exit">Press again to exit</string>
+    <string name="title_activity_main_menu">MainMenu</string>
+    <string name="internet_connection_error">Seems like you are having trouble connecting to
+    internet</string>
+    <string name="title_activity_select_opponent">SelectOpponentActivity</string>
+    <string name="sending_challenge_opponent_alert_dialog_title">Sending challenge</string>
+    <string name="sending_challenge_opponent_alert_dialog_msg">Do you want to send this
+        challenge to %s?</string>
+    <string name="error_loading_user_friends">An error has occurred while loading user\'s
+        friends</string>
+    <string name="error_creating_challenge">An error has occurred while creating challenge</string>
+    <string name="yes_text">Yes</string>
+    <string name="no_text">No</string>
 </resources>

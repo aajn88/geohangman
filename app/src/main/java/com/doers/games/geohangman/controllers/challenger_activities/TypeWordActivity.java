@@ -1,4 +1,4 @@
-package com.doers.games.geohangman.controllers;
+package com.doers.games.geohangman.controllers.challenger_activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -79,7 +79,7 @@ public class TypeWordActivity extends RoboActionBarActivity {
      * This method starts SendChallengeActivity
      */
     private void startSendChallengeActivity() {
-        Intent sendChallengeIntent = new Intent(this, SendChallengeActivity.class);
+        Intent sendChallengeIntent = new Intent(this, SelectOpponentActivity.class);
         startActivity(sendChallengeIntent);
     }
 
