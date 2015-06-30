@@ -4,6 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.doers.games.geohangman.model.Challenge;
+import com.doers.games.geohangman.model.restful.GetChallengeResponse;
+
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * This ChallengeUtils helps to process basic Challenge operations
@@ -12,26 +16,26 @@ import com.doers.games.geohangman.model.Challenge;
  */
 public final class ChallengeUtils {
 
-    /** Private no-parameters constructor **/
-    private ChallengeUtils(){}
+    /** Private no-parameters constructor * */
+    private ChallengeUtils() {}
 
     /**
-     * This method parsers the variables in the intent to a Challenge
+     * This method parsers server response of challenge and loads the challenge image given its url
      *
-     * @param imageBytes
-     * @param challengeArgs in the following format: "(word)|(lat)|(lng)|(zoom)" -> "MyWord|1.1212313|4.1132133|10.0"
+     * @param challengeResponse This is the server response
+     * @param imageUrl          Where image is located
+     *
      * @return Parsed Challenge
      */
-    public static Challenge parseChallenge(byte []imageBytes, String challengeArgs) {
+    public static Challenge parseChallenge(GetChallengeResponse challengeResponse,
+                                           String imageUrl) throws IOException {
 
         Challenge challenge = new Challenge();
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inMutable = Boolean.TRUE;
+        URL url = new URL(imageUrl);
+        Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 
-        Bitmap image = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, options);
-
-        completeChallenge(challenge, challengeArgs);
+        completeChallenge(challenge, challengeResponse);
 
         challenge.setPic(image);
 
@@ -39,52 +43,20 @@ public final class ChallengeUtils {
     }
 
     /**
-     *
      * This method fills challenge fields with challengeArgs (word and MapPoint)
      *
-     * @param challenge Challenge where args will be added
-     * @param challengeArgs Challenge args in the following format: "(word)|(lat)|(lng)|(zoom)" -> "MyWord|1.1212313|4.1132133|10.0"
+     * @param challenge     Challenge where args will be added
+     * @param challengeResponse This is the server response
      */
-    private static void completeChallenge(Challenge challenge, String challengeArgs) {
+    private static void completeChallenge(Challenge challenge, GetChallengeResponse challengeResponse) {
         Challenge.MapPoint mapPoint = new Challenge.MapPoint();
 
-        String []args = challengeArgs.split(StringUtils.REGEX_SEPARATOR);
-        challenge.setWord(args[0].toUpperCase());
-        mapPoint.setLat(Double.parseDouble(args[1]));
-        mapPoint.setLng(Double.parseDouble(args[2]));
-        mapPoint.setZoom(Float.parseFloat(args[3]));
+        challenge.setWord(challengeResponse.getWord());
+        mapPoint.setLat(challengeResponse.getLat());
+        mapPoint.setLng(challengeResponse.getLng());
+        mapPoint.setZoom(challengeResponse.getZoom());
         challenge.setMapPoint(mapPoint);
 
-    }
-
-    /**
-     * Returns in a single String all the Challenge args separated by |, i.e.:
-     *
-     * Challenge.word = "MyWord"
-     * Challenge.mapPoint.lat = 1.1212313
-     * Challenge.mapPoint.lng = 4.1132133
-     * Challenge.mapPoint.zoom = 10.0
-     *
-     * then, this method returns:
-     *
-     * "MyWord|1.1212313|4.1132133|10.0"
-     *
-     * @return Challenge args separated by |
-     */
-    public static String buildOtherChallengeArgs(Challenge challenge) {
-
-        Challenge.MapPoint mp = challenge.getMapPoint();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(challenge.getWord());
-        sb.append(StringUtils.SEPARATOR);
-        sb.append(mp.getLat());
-        sb.append(StringUtils.SEPARATOR);
-        sb.append(mp.getLng());
-        sb.append(StringUtils.SEPARATOR);
-        sb.append(mp.getZoom());
-
-        return sb.toString();
     }
 
 }

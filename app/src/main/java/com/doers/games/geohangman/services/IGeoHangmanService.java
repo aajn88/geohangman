@@ -1,7 +1,6 @@
 package com.doers.games.geohangman.services;
 
 import android.graphics.Bitmap;
-import android.nfc.NdefMessage;
 
 import com.doers.games.geohangman.model.Challenge;
 
@@ -64,26 +63,13 @@ public interface IGeoHangmanService {
     String getStoredWord();
 
     /**
-     * This method build NdefMessage based on the Challenge to be sent through NFC.
-     * <p/>
-     * This NdefMessage has two NdefRecords, one for challenge pic and the other one with challenge
-     * args:
-     * <p/>
-     * NdefRecord[0] = challengeImage NdefRecord[1] = args separated by |, i.e.:
-     * "(word)|(lat)|(lng)|(zoom)" -> "MyWord|1.1212313|4.1132133|10.0"
-     *
-     * @return NdefMessage with Challenge args and pics in separated NdefRecords
-     */
-    NdefMessage buildNdefMessage();
-
-    /**
      * This method receives the image bytes and challengeArgs to start the Challenge
      *
-     * @param image         byte array
-     * @param challengeArgs args separated by |, i.e.: "(word)|(lat)|(lng)|(zoom)" ->
-     *                      "MyWord|1.1212313|4.1132133|10.0"
+     * @param challengeId The challenge Id to be requested
+     *
+     * @throws IOException
      */
-    void startChallenge(byte[] image, String challengeArgs);
+    void startChallenge(Integer challengeId) throws IOException;
 
     /**
      * This method verifies if that a given word is exactly the Challenge word to be guessed
@@ -100,9 +86,8 @@ public interface IGeoHangmanService {
     void restartAll();
 
     /**
-     *
-     * This method sends the challenge to a given opponent. This challenge is sent to the server
-     * and the server stores the challenge and notify opponent about the challenge
+     * This method sends the challenge to a given opponent. This challenge is sent to the server and
+     * the server stores the challenge and notify opponent about the challenge
      *
      * @param opponentId The opponent Id
      */
@@ -112,8 +97,9 @@ public interface IGeoHangmanService {
      * This method requests challenge image from server given a challengeId
      *
      * @param challengeId The challenge Id
+     *
      * @return Respective challenge image
      */
-    byte[] requestChallengeImage(Integer challengeId) throws IOException;
+    String requestChallengeImageUrl(Integer challengeId) throws IOException;
 
 }

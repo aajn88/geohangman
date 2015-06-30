@@ -4,6 +4,7 @@ import com.doers.games.geohangman.model.Challenge;
 import com.doers.games.geohangman.model.UserInfo;
 import com.doers.games.geohangman.model.restful.CreateChallengeResponse;
 import com.doers.games.geohangman.model.restful.GetChallengeImageResponse;
+import com.doers.games.geohangman.model.restful.GetChallengeResponse;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -57,6 +58,14 @@ public interface IServerClientService {
      * @param challengeId The challengeId
      * @return The server response for GetChallengeImage request
      */
-    GetChallengeImageResponse getChallengeImage(Integer challengeId) throws IOException;
+    GetChallengeImageResponse getChallengeImageUrl(Integer challengeId) throws IOException;
+
+    /**
+     * This method requests a given challenge
+     *
+     * @param challengeId The challenge to be requested
+     * @return The result challenge if exists, otherwise returns null
+     */
+    GetChallengeResponse getChallenge(Integer challengeId) throws IOException;
 
 }

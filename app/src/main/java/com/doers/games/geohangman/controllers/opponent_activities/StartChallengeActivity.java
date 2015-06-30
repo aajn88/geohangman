@@ -2,12 +2,8 @@ package com.doers.games.geohangman.controllers.opponent_activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
-import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.doers.games.geohangman.R;
-import com.doers.games.geohangman.constants.Constants;
 import com.doers.games.geohangman.constants.Messages;
 import com.doers.games.geohangman.model.Challenge;
 import com.doers.games.geohangman.services.IGeoHangmanService;
@@ -40,17 +35,24 @@ import roboguice.inject.InjectView;
  */
 public class StartChallengeActivity extends RoboActionBarActivity {
 
+    /** This threshold is used to define a limit for back button * */
     private static final Long THRESHOLD = 1000l;
+
     /** GeoHangman main service * */
     @Inject
     private IGeoHangmanService geoHangmanService;
+
     /** Challenge Pic ImageView * */
     @InjectView(R.id.challengePicIv)
     private ImageView mChallengePicIv;
+
+    /** The startChallengeHelper * */
     @Inject
     private StartChallengeActivityHelper startChallengeHelper;
+
     /** Google Map * */
     private GoogleMap mMap;
+
     /** Last time Back button was pressed * */
     private GregorianCalendar lastBackPressed = null;
 
@@ -59,26 +61,10 @@ public class StartChallengeActivity extends RoboActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_challenge);
 
-        Intent challengeIntent = getIntent();
-        handleIntent((Intent) challengeIntent.getParcelableExtra(Constants.CHALLENGE_EXTRA));
-    }
-
-    /**
-     * This method handles NFC intent. Retrieves challenge information and send it to GeoHangman
-     * main service to process the data.
-     *
-     * @param intent
-     */
-    private void handleIntent(Intent intent) {
-        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-
-        NdefMessage challengeMsg = (NdefMessage) rawMsgs[0];
-        NdefRecord[] records = challengeMsg.getRecords();
-
-        byte[] image = records[0].getPayload();
-        String challengeArgs = new String(records[1].getPayload());
-
-        new StartChallengeAsync(image, challengeArgs).execute();
+        Intent startIntent = getIntent();
+        if (startIntent != null) {
+            new StartChallengeAsync().execute();
+        }
     }
 
     @Override
@@ -153,24 +139,6 @@ public class StartChallengeActivity extends RoboActionBarActivity {
         /** Progress Dialog while background service is in progress * */
         private ProgressDialog progress;
 
-        /** Pic Challenge bytes * */
-        private byte[] image;
-
-        /** Challenge args * */
-        private String challengeArgs;
-
-        /**
-         * This constructor receives challenge pic bytes and challengeArgs
-         *
-         * @param image         bytes
-         * @param challengeArgs Using the following format: "(word)|(lat)|(lng)|(zoom)" ->
-         *                      "MyWord|33.96482810963319|-118.30714412033558|6.589385"
-         */
-        public StartChallengeAsync(byte[] image, String challengeArgs) {
-            this.image = image;
-            this.challengeArgs = challengeArgs;
-        }
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -180,8 +148,8 @@ public class StartChallengeActivity extends RoboActionBarActivity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                byte[] image = geoHangmanService.requestChallengeImage(262145);
-                geoHangmanService.startChallenge(image, challengeArgs);
+                Integer challengeId = 1;
+                geoHangmanService.startChallenge(challengeId);
             } catch (IOException e) {
                 Log.e(Messages.ERROR, "An error has occurred when Image was requested to server",
                         e);

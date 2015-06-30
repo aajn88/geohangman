@@ -20,7 +20,7 @@ public final class Messages {
     public static final String CREATED_CHALLENGE_TAG = "CREATED_CHALLENGE";
 
     /** Created Challenge Message * */
-    public static final String CREATED_CHALLENGE_MSG = "The created Challenge: [ChallengeId = %s, ImageId = %s]";
+    public static final String CREATED_CHALLENGE_MSG = "The created Challenge: [ChallengeId = %s, ImageUrl = %s]";
 
     /** Message when is loading * */
     public static final String LOADING = "Loading...";

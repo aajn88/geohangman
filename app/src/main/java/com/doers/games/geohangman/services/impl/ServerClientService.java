@@ -14,6 +14,7 @@ import com.doers.games.geohangman.model.restful.CreateChallengeResponse;
 import com.doers.games.geohangman.model.restful.CreateUpdateFriendsRequest;
 import com.doers.games.geohangman.model.restful.CreateUpdateUserRequest;
 import com.doers.games.geohangman.model.restful.GetChallengeImageResponse;
+import com.doers.games.geohangman.model.restful.GetChallengeResponse;
 import com.doers.games.geohangman.model.restful.GoogleProfilePicResponse;
 import com.doers.games.geohangman.services.IServerClientService;
 import com.doers.games.geohangman.utils.RestUtils;
@@ -132,8 +133,9 @@ public class ServerClientService implements IServerClientService {
 
         CreateChallengeImageResponse imageResponse = sendImageChallenge(challenge);
 
-        Log.d(Messages.CREATED_CHALLENGE_TAG, String.format(Messages.CREATED_CHALLENGE_MSG,
-                challenge.getId(), imageResponse.getChallengeImageId()));
+        Log.d(Messages.CREATED_CHALLENGE_TAG,
+                String.format(Messages.CREATED_CHALLENGE_MSG, challenge.getId(),
+                        imageResponse.getImageUrl()));
 
         return response;
     }
@@ -146,14 +148,31 @@ public class ServerClientService implements IServerClientService {
      * @return The server response for GetChallengeImage request
      */
     @Override
-    public GetChallengeImageResponse getChallengeImage(Integer challengeId) throws IOException {
+    public GetChallengeImageResponse getChallengeImageUrl(Integer challengeId) throws IOException {
 
-        String getChallengeImageUrl = ServerClientServiceHelper.getUrl(getProperties(),
-                ServerUrlTypes.REQUEST_CHALLENGES_IMAGE);
+        String getChallengeImageUrl = ServerClientServiceHelper
+                .getUrl(getProperties(), ServerUrlTypes.REQUEST_CHALLENGES_IMAGE);
 
         getChallengeImageUrl = String.format(getChallengeImageUrl, challengeId);
 
         return RestUtils.get(getChallengeImageUrl, GetChallengeImageResponse.class);
+    }
+
+    /**
+     * This method requests a given challenge
+     *
+     * @param challengeId The challenge to be requested
+     *
+     * @return The result challenge if exists, otherwise returns null
+     */
+    @Override
+    public GetChallengeResponse getChallenge(Integer challengeId) throws IOException {
+        String getChallengeUrl = ServerClientServiceHelper
+                .getUrl(getProperties(), ServerUrlTypes.REQUEST_CHALLENGES);
+
+        getChallengeUrl = String.format(getChallengeUrl, challengeId);
+
+        return RestUtils.get(getChallengeUrl, GetChallengeResponse.class);
     }
 
     private CreateChallengeImageResponse sendImageChallenge(Challenge challenge) throws
@@ -162,8 +181,8 @@ public class ServerClientService implements IServerClientService {
         CreateChallengeImageRequest request = ServerClientServiceHelper
                 .buildCreateImageChallengeRequest(challenge);
 
-        String createImageUrl = ServerClientServiceHelper.getUrl(getProperties(), ServerUrlTypes
-                .CHALLENGES_IMAGE);
+        String createImageUrl = ServerClientServiceHelper
+                .getUrl(getProperties(), ServerUrlTypes.CHALLENGES_IMAGE);
 
         return RestUtils.post(createImageUrl, request, CreateChallengeImageResponse.class);
     }
@@ -171,10 +190,12 @@ public class ServerClientService implements IServerClientService {
     /**
      * This method sends the basic Challenge Information to server (all information but image)
      *
-     * @param challenge The Challenge to be sent
+     * @param challenge    The Challenge to be sent
      * @param challengerId The Challenger Id
-     * @param opponentId The opponent Id
+     * @param opponentId   The opponent Id
+     *
      * @return Request response by server
+     *
      * @throws IOException If a communication error occurs
      */
     private CreateChallengeResponse sendBasicChallenge(Challenge challenge, String challengerId,

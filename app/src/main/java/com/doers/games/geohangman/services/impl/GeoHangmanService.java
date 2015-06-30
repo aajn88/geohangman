@@ -9,6 +9,7 @@ import com.doers.games.geohangman.BuildConfig;
 import com.doers.games.geohangman.model.Challenge;
 import com.doers.games.geohangman.model.restful.CreateChallengeResponse;
 import com.doers.games.geohangman.model.restful.GetChallengeImageResponse;
+import com.doers.games.geohangman.model.restful.GetChallengeResponse;
 import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.doers.games.geohangman.services.IServerClientService;
 import com.doers.games.geohangman.services.IUsersService;
@@ -124,61 +125,24 @@ public class GeoHangmanService implements IGeoHangmanService {
     }
 
     /**
-     * This method build NdefMessage based on the Challenge to be sent through NFC.
-     * <p/>
-     * This NdefMessage has two NdefRecords, one for challenge pic and the other one with challenge
-     * args:
-     * <p/>
-     * NdefRecord[0] = challengeImage NdefRecord[1] = args separated by |, i.e.:
-     * "(word)|(lat)|(lng)|(zoom)" -> "MyWord|1.1212313|4.1132133|10.0"
+     * * This method receives the image bytes and challengeArgs to start the Challenge
      *
-     * @return NdefMessage with Challenge args and pics in separated NdefRecords
+     * @param challengeId The challenge Id to be requested
+     *
+     * @throws IOException
+     * @throws IllegalArgumentException This exception is thrown when the challenge does not exist
+     *                                  or has been already played
      */
     @Override
-    public NdefMessage buildNdefMessage() {
-        byte[] image = ImageUtils.buildBitmapByteArray(challenge.getPic());
-        String args = ChallengeUtils.buildOtherChallengeArgs(challenge);
-
-        return buildNdefMessage(image, args);
-    }
-
-    /**
-     * This method creates the NdefMessage based on the challenge image and args
-     *
-     * @param challengeImage in a byte array
-     * @param challengeArgs  separated by |, i.e.: "(word)|(lat)|(lng)|(zoom)" ->
-     *                       "MyWord|1.1212313|4.1132133|10.0"
-     *
-     * @return the NdefMessage to be sent
-     */
-    private NdefMessage buildNdefMessage(byte[] challengeImage, String challengeArgs) {
-        NdefRecord picRecord = NdefRecord
-                .createMime(APPLICATION_TAG + BuildConfig.APPLICATION_ID, challengeImage);
-        NdefRecord argsRecord = NdefRecord
-                .createMime(APPLICATION_TAG + BuildConfig.APPLICATION_ID, challengeArgs.getBytes());
-
-        NdefMessage message;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH && false) {
-            message = new NdefMessage(new NdefRecord[]{picRecord, argsRecord,
-                    NdefRecord.createApplicationRecord(BuildConfig.APPLICATION_ID)});
-        } else {
-            message = new NdefMessage(new NdefRecord[]{argsRecord, picRecord});
+    public void startChallenge(Integer challengeId) throws IOException, IllegalArgumentException {
+        GetChallengeResponse challengeResponse = serverClientService.getChallenge(challengeId);
+        if (challengeResponse != null && challengeResponse.isPlayed()) {
+            throw new IllegalArgumentException(
+                    "This challenge does not exist or has been already played!");
         }
+        String imageUrl = requestChallengeImageUrl(challengeId);
 
-        return message;
-    }
-
-    /**
-     * This method receives the image bytes and challengeArgs to start the Challenge
-     *
-     * @param image         byte array
-     * @param challengeArgs args separated by |, i.e.: "(word)|(lat)|(lng)|(zoom)" ->
-     *                      "MyWord|1.1212313|4.1132133|10.0"
-     */
-    @Override
-    public void startChallenge(byte[] image, String challengeArgs) {
-        challenge = ChallengeUtils.parseChallenge(image, challengeArgs);
+        this.challenge = ChallengeUtils.parseChallenge(challengeResponse, imageUrl);
     }
 
     /**
@@ -220,9 +184,9 @@ public class GeoHangmanService implements IGeoHangmanService {
      * @return Respective challenge image
      */
     @Override
-    public byte[] requestChallengeImage(Integer challengeId) throws IOException {
-        GetChallengeImageResponse response = serverClientService.getChallengeImage(challengeId);
-        return response.getImageBytes().getBytes();
+    public String requestChallengeImageUrl(Integer challengeId) throws IOException {
+        GetChallengeImageResponse response = serverClientService.getChallengeImageUrl(challengeId);
+        return response.getImageUrl();
     }
 
 }

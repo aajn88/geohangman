@@ -11,8 +11,8 @@ public class GetChallengeImageResponse extends AbstractResponse {
     /** The Image Id * */
     private Integer imageId;
 
-    /** The Image Bytes * */
-    private String imageBytes;
+    /** The Image Url * */
+    private String imageUrl;
 
     /**
      * @return the imageId
@@ -29,16 +29,16 @@ public class GetChallengeImageResponse extends AbstractResponse {
     }
 
     /**
-     * @return the imageBytes
+     * @return the imageUrl
      */
-    public String getImageBytes() {
-        return imageBytes;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     /**
-     * @return imageBytes the imageBytes to set
+     * @return imageUrl the imageUrl to set
      */
-    public void setImageBytes(String imageBytes) {
-        this.imageBytes = imageBytes;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

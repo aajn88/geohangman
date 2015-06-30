@@ -81,6 +81,7 @@ final class ServerClientServiceHelper {
                 break;
             case USERS:
             case CHALLENGES:
+            case REQUEST_CHALLENGES:
             case CHALLENGES_IMAGE:
             case REQUEST_CHALLENGES_IMAGE:
             case REGISTERED_FRIENDS:

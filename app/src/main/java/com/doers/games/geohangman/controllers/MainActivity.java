@@ -55,19 +55,24 @@ public class MainActivity extends RoboActionBarActivity
     /** G+ sign-in button * */
     @InjectView(R.id.signInButton)
     private SignInButton mSignInButton;
+    
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
+
     /* A flag indicating that a PendingIntent is in progress and prevents
      * us from starting further intents.
      */
     private boolean mIntentInProgress;
+
     /**
      * True if the sign-in button was clicked.  When true, we know to resolve all issues preventing
      * sign-in without waiting.
      */
     private boolean mSignInClicked;
+
     /** Current Session User * */
     private UserInfo mCurrentUser;
+
     /** Geohangman Users Service * */
     @Inject
     private IUsersService usersService;
