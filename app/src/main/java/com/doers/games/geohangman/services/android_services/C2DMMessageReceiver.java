@@ -58,7 +58,9 @@ public class C2DMMessageReceiver extends BroadcastReceiver {
             Log.d(Messages.GCM_TAG,
                     String.format("%s = %s", CHALLENGE_ID, data.getString(CHALLENGE_ID)));
 
-            createNotification(context, data);
+            if(data.getString(CHALLENGE_ID) != null) {
+                createNotification(context, data);
+            }
         }
     }
 

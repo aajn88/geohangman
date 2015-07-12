@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.doers.games.geohangman.R;
 import com.doers.games.geohangman.controllers.challenger_activities.TakePicActivity;
 import com.doers.games.geohangman.controllers.opponent_activities.StartChallengeActivity;
+import com.doers.games.geohangman.services.android_services.C2DMMessageReceiver;
 
 import java.util.GregorianCalendar;
 
@@ -55,7 +56,7 @@ public class MainMenuActivity extends RoboActionBarActivity {
             public void onClick(View v) {
                 Intent startChallengeIntent = new Intent(MainMenuActivity.this,
                         StartChallengeActivity.class);
-                startChallengeIntent.putExtra(StartChallengeActivity.CHALLENGE_ID_EXTRA, 524301);
+                startChallengeIntent.putExtra(C2DMMessageReceiver.CHALLENGE_ID, 524301);
                 startActivity(startChallengeIntent);
             }
         });
