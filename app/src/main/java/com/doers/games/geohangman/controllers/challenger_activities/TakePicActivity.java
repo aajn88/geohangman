@@ -18,7 +18,7 @@ import com.doers.games.geohangman.constants.ActivityResultCodes;
 import com.doers.games.geohangman.constants.Messages;
 import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.doers.games.geohangman.utils.ImageUtils;
-import com.doers.games.geohangman.utils.StoreUtils;
+import com.doers.games.geohangman.utils.IOUtils;
 import com.google.inject.Inject;
 
 import java.io.File;
@@ -104,7 +104,7 @@ public class TakePicActivity extends RoboActionBarActivity {
         File photo;
 
         try {
-            photo = StoreUtils.createTemporaryFile(TEMPORARY_PICTURE_FILE_NAME, JPG_EXTENSION);
+            photo = IOUtils.createTemporaryFile(TEMPORARY_PICTURE_FILE_NAME, JPG_EXTENSION);
             photo.delete();
         } catch (IOException e) {
             Log.e(Messages.ERROR, Messages.CREATING_FILE_ERROR);

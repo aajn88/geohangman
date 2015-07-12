@@ -1,12 +1,16 @@
 package com.doers.games.geohangman.services.impl;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.doers.games.geohangman.model.UserInfo;
 import com.doers.games.geohangman.services.IServerClientService;
+import com.doers.games.geohangman.services.IUsersManager;
 import com.doers.games.geohangman.services.IUsersService;
+import com.doers.games.geohangman.services.android_services.TokenIdIntentService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -30,6 +34,14 @@ public class UsersService implements IUsersService {
     /** Current User in session **/
     private UserInfo currentUser;
 
+    /** The Users Manager **/
+    @Inject
+    private IUsersManager usersManager;
+
+    /** Current Context **/
+    @Inject
+    private Context context;
+
     /**
      * This method stores current User. It sends it to GeoHangman Server to store it
      *
@@ -40,6 +52,14 @@ public class UsersService implements IUsersService {
             NoSuchAlgorithmException {
         serverClient.createOrUpdateUser(currentUser);
         this.currentUser = currentUser;
+        String userId = usersManager.getUser();
+
+        if(!currentUser.getId().equals(userId)) {
+            usersManager.createUser(currentUser.getId());
+
+            Intent createTokenIntent = new Intent(context, TokenIdIntentService.class);
+            context.startService(createTokenIntent);
+        }
     }
 
     /**
