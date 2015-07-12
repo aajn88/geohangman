@@ -52,6 +52,9 @@ public final class Messages {
     /** Tag for logs when Registered Friends * */
     public static final String REGISTERED_FRIENDS_TAG = "REGISTERED_FRIENDS";
 
+    /** GCM Tag **/
+    public static final String GCM_TAG = "C2DM";
+
 
     /** Private no-parameters constructor * */
     private Messages() {

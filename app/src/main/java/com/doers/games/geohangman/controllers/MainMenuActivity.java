@@ -55,6 +55,7 @@ public class MainMenuActivity extends RoboActionBarActivity {
             public void onClick(View v) {
                 Intent startChallengeIntent = new Intent(MainMenuActivity.this,
                         StartChallengeActivity.class);
+                startChallengeIntent.putExtra(StartChallengeActivity.CHALLENGE_ID_EXTRA, 524301);
                 startActivity(startChallengeIntent);
             }
         });

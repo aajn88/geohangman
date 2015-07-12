@@ -31,6 +31,9 @@ public enum ServerUrlTypes {
     /** Registered Friends URL * */
     REGISTERED_FRIENDS("registered_friends.url"),
 
+    /** Tokens URL * */
+    TOKENS("token.url"),
+
     /** Google Profile Picture URL * */
     GOOGLE_PROFILE_PICTURE("google.profile.picture.url");
 

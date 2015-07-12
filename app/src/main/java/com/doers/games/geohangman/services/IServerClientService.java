@@ -68,4 +68,14 @@ public interface IServerClientService {
      */
     GetChallengeResponse getChallenge(Integer challengeId) throws IOException;
 
+    /**
+     * This method creates or updates a given token in Geohangman Servers
+     *
+     * @param userId User to be updated
+     * @param token Token to be sent
+     * @return User Id if succeeded, otherwise returns null
+     * @throws IOException
+     */
+    String createOrUpdateToken(String userId, String token) throws IOException;
+
 }

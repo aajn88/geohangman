@@ -14,6 +14,7 @@ import com.doers.games.geohangman.R;
 import com.doers.games.geohangman.constants.Messages;
 import com.doers.games.geohangman.model.Challenge;
 import com.doers.games.geohangman.services.IGeoHangmanService;
+import com.doers.games.geohangman.services.android_services.C2DMMessageReceiver;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.util.GregorianCalendar;
 
 import roboguice.activity.RoboActionBarActivity;
+import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
 /**
@@ -33,6 +35,7 @@ import roboguice.inject.InjectView;
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
+@ContentView(R.layout.activity_start_challenge)
 public class StartChallengeActivity extends RoboActionBarActivity {
 
     /** This threshold is used to define a limit for back button * */
@@ -59,11 +62,12 @@ public class StartChallengeActivity extends RoboActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start_challenge);
 
         Intent startIntent = getIntent();
         if (startIntent != null) {
-            new StartChallengeAsync().execute();
+            Bundle data = startIntent.getExtras();
+            new StartChallengeAsync()
+                    .execute(Integer.parseInt(data.getString(C2DMMessageReceiver.CHALLENGE_ID)));
         }
     }
 
@@ -134,7 +138,7 @@ public class StartChallengeActivity extends RoboActionBarActivity {
     /**
      * This is the Start Challenge Async Task. Its job is process incoming data and set up views
      */
-    private class StartChallengeAsync extends AsyncTask<Void, Void, Void> {
+    private class StartChallengeAsync extends AsyncTask<Integer, Void, Void> {
 
         /** Progress Dialog while background service is in progress * */
         private ProgressDialog progress;
@@ -146,9 +150,9 @@ public class StartChallengeActivity extends RoboActionBarActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(Integer... params) {
             try {
-                Integer challengeId = 1;
+                Integer challengeId = params[0];
                 geoHangmanService.startChallenge(challengeId);
             } catch (IOException e) {
                 Log.e(Messages.ERROR, "An error has occurred when Image was requested to server",

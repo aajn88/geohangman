@@ -11,6 +11,8 @@ import com.doers.games.geohangman.model.restful.CreateChallengeRequest;
 import com.doers.games.geohangman.model.restful.CreateUpdateFriendsRequest;
 import com.doers.games.geohangman.model.restful.CreateUpdateUserRequest;
 import com.doers.games.geohangman.utils.ImageUtils;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import org.apache.commons.codec.binary.Hex;
 
@@ -26,6 +28,7 @@ import java.util.Properties;
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
+@Singleton
 final class ServerClientServiceHelper {
 
     /** Secure Key * */
@@ -49,101 +52,16 @@ final class ServerClientServiceHelper {
     /** Properties File Charset * */
     private static final String PROPERTIES_FILE_CHARSET = "UTF-8";
 
+    /** Properties File name * */
+    private static final String PROPERTIES_FILE = "server.properties";
+
+    /** ServerClientService properties * */
+    private Properties properties;
+
     /** Private default constructor * */
-    private ServerClientServiceHelper() {}
-
-    /**
-     * This method builds a Properties instance given the context and the properties file name
-     *
-     * @param context        Current Context
-     * @param propertiesFile Properties file name
-     *
-     * @return Properties instance with properties loaded
-     *
-     * @throws IOException
-     */
-    static Properties buildProperties(Context context, String propertiesFile) throws IOException {
-        InputStreamReader isr = new InputStreamReader(context.getAssets().open(propertiesFile),
-                PROPERTIES_FILE_CHARSET);
-        Properties properties = new Properties();
-        properties.load(isr);
-        return properties;
-    }
-
-    static String getUrl(Properties properties, ServerUrlTypes type) {
-
-        StringBuilder url = new StringBuilder(
-                properties.getProperty(ServerUrlTypes.DEFAULT.getProperty()));
-
-        switch (type) {
-            case DEFAULT:
-                // Server Default URL already in url
-                break;
-            case USERS:
-            case CHALLENGES:
-            case REQUEST_CHALLENGES:
-            case CHALLENGES_IMAGE:
-            case REQUEST_CHALLENGES_IMAGE:
-            case REGISTERED_FRIENDS:
-                url.append(properties.getProperty(type.getProperty()));
-                break;
-            case FRIENDS:
-                url.append(properties.getProperty(ServerUrlTypes.USERS.getProperty()));
-                url.append(properties.getProperty(type.getProperty()));
-                break;
-            case GOOGLE_PROFILE_PICTURE:
-                url = new StringBuilder(properties.getProperty(type.getProperty()));
-                url.append(properties.getProperty(BROWSER_KEY));
-                break;
-            default:
-                throw new IllegalArgumentException(
-                        String.format("Server Url Type not supported [%s]", type.name()));
-        }
-
-        return url.toString();
-    }
-
-    /**
-     * This method builds a Create/Update User Request
-     *
-     * @param userInfo   the User to be wrapped in the request
-     * @param properties Properties
-     *
-     * @return Request
-     *
-     * @throws NoSuchAlgorithmException
-     */
-    static CreateUpdateUserRequest buildUserRequest(UserInfo userInfo, Properties properties) throws
-            NoSuchAlgorithmException {
-        CreateUpdateUserRequest request = new CreateUpdateUserRequest();
-
-        request.setTest(Boolean.FALSE);
-        request.setSecurityKey(buildSecurityKey(properties));
-        request.setUser(userInfo);
-
-        return request;
-    }
-
-    /**
-     * This method builds a Create/Update User Request
-     *
-     * @param friends    the User's friends
-     * @param properties Properties
-     *
-     * @return Request
-     *
-     * @throws NoSuchAlgorithmException
-     */
-    static CreateUpdateFriendsRequest buildUserFriendsRequest(List<UserInfo> friends,
-                                                              Properties properties) throws
-            NoSuchAlgorithmException {
-        CreateUpdateFriendsRequest request = new CreateUpdateFriendsRequest();
-
-        request.setTest(Boolean.FALSE);
-        request.setSecurityKey(buildSecurityKey(properties));
-        request.setFriends(friends);
-
-        return request;
+    @Inject
+    private ServerClientServiceHelper(Context context) throws IOException {
+        this.properties = buildProperties(context, PROPERTIES_FILE);
     }
 
     /**
@@ -156,9 +74,9 @@ final class ServerClientServiceHelper {
      *
      * @return Challenge request
      */
-    static CreateChallengeRequest buildCreateChallengeRequest(Challenge challenge,
-                                                              String challengerId,
-                                                              String opponentId) {
+    public static CreateChallengeRequest buildCreateChallengeRequest(Challenge challenge,
+                                                                     String challengerId,
+                                                                     String opponentId) {
         CreateChallengeRequest request = new CreateChallengeRequest();
 
         request.setChallengerId(challengerId);
@@ -179,7 +97,8 @@ final class ServerClientServiceHelper {
      *
      * @return Create Challenge Image request
      */
-    static CreateChallengeImageRequest buildCreateImageChallengeRequest(Challenge challenge) {
+    public static CreateChallengeImageRequest buildCreateImageChallengeRequest(
+            Challenge challenge) {
         CreateChallengeImageRequest request = new CreateChallengeImageRequest();
         request.setChallengeId(challenge.getId());
         String encodedImage = Base64
@@ -191,13 +110,114 @@ final class ServerClientServiceHelper {
     }
 
     /**
+     * This method builds a Properties instance given the context and the properties file name
+     *
+     * @param context        Current Context
+     * @param propertiesFile Properties file name
+     *
+     * @return Properties instance with properties loaded
+     *
+     * @throws IOException
+     */
+    private Properties buildProperties(Context context, String propertiesFile) throws IOException {
+        InputStreamReader isr = new InputStreamReader(context.getAssets().open(propertiesFile),
+                PROPERTIES_FILE_CHARSET);
+        Properties properties = new Properties();
+        properties.load(isr);
+        return properties;
+    }
+
+    /**
+     * This method returns an specific URL given a URL Type
+     *
+     * @param type requested URL type
+     *
+     * @return requested URL
+     *
+     * @throws IllegalArgumentException If requested type is not supported
+     */
+    public String getUrl(ServerUrlTypes type) throws IllegalArgumentException {
+
+        StringBuilder url = new StringBuilder(
+                properties.getProperty(ServerUrlTypes.DEFAULT.getProperty()));
+
+        switch (type) {
+            case DEFAULT:
+                // Server Default URL already in url
+                break;
+            case USERS:
+            case CHALLENGES:
+            case REQUEST_CHALLENGES:
+            case CHALLENGES_IMAGE:
+            case REQUEST_CHALLENGES_IMAGE:
+                url.append(properties.getProperty(type.getProperty()));
+                break;
+            case FRIENDS:
+            case REGISTERED_FRIENDS:
+            case TOKENS:
+                url.append(properties.getProperty(ServerUrlTypes.USERS.getProperty()));
+                url.append(properties.getProperty(type.getProperty()));
+                break;
+            case GOOGLE_PROFILE_PICTURE:
+                url = new StringBuilder(properties.getProperty(type.getProperty()));
+                url.append(properties.getProperty(BROWSER_KEY));
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        String.format("Server Url Type not supported [%s]", type.name()));
+        }
+
+        return url.toString();
+    }
+
+    /**
+     * This method builds a Create/Update User Request
+     *
+     * @param userInfo the User to be wrapped in the request
+     *
+     * @return Request
+     *
+     * @throws NoSuchAlgorithmException
+     */
+    public CreateUpdateUserRequest buildUserRequest(UserInfo userInfo) throws
+            NoSuchAlgorithmException {
+        CreateUpdateUserRequest request = new CreateUpdateUserRequest();
+
+        request.setTest(Boolean.FALSE);
+        request.setSecurityKey(buildSecurityKey());
+        request.setUser(userInfo);
+
+        return request;
+    }
+
+    /**
+     * This method builds a Create/Update User Request
+     *
+     * @param friends the User's friends
+     *
+     * @return Request
+     *
+     * @throws NoSuchAlgorithmException
+     */
+    public CreateUpdateFriendsRequest buildUserFriendsRequest(List<UserInfo> friends) throws
+            NoSuchAlgorithmException {
+        CreateUpdateFriendsRequest request = new CreateUpdateFriendsRequest();
+
+        request.setTest(Boolean.FALSE);
+        request.setSecurityKey(buildSecurityKey());
+        request.setFriends(friends);
+
+        return request;
+    }
+
+    /**
      * Builds Security key
      *
      * @return Build security key
      *
      * @throws NoSuchAlgorithmException
      */
-    private static String buildSecurityKey(Properties properties) throws NoSuchAlgorithmException {
+    private String buildSecurityKey() throws NoSuchAlgorithmException {
         StringBuilder sb = new StringBuilder();
         sb.append(properties.get(SECURE_KEY)).append(SEPARATOR).append(properties.get(PARAM1))
                 .append(SEPARATOR).append(properties.get(PARAM2));

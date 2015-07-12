@@ -1,6 +1,5 @@
 package com.doers.games.geohangman.services.impl;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.doers.games.geohangman.constants.Messages;
@@ -25,7 +24,6 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * IServerClientService implementation
@@ -35,29 +33,9 @@ import java.util.Properties;
 @Singleton
 public class ServerClientService implements IServerClientService {
 
-    /** Properties File name * */
-    private static final String PROPERTIES_FILE = "server.properties";
-
-    /** Current context * */
+    /** Server Client Service Helper * */
     @Inject
-    private Context context;
-
-    /** ServerClientService properties * */
-    private Properties properties;
-
-    /**
-     * Get a configured properties instance
-     *
-     * @return Configured properties instance
-     *
-     * @throws IOException
-     */
-    private Properties getProperties() throws IOException {
-        if (properties == null) {
-            properties = ServerClientServiceHelper.buildProperties(context, PROPERTIES_FILE);
-        }
-        return properties;
-    }
+    private ServerClientServiceHelper helper;
 
     /**
      * This method sends a user to the server to be created or updated
@@ -82,8 +60,7 @@ public class ServerClientService implements IServerClientService {
     @Override
     public List<UserInfo> getRegisteredFriends(String userId) throws IOException {
 
-        String registeredFriendsUrl = ServerClientServiceHelper
-                .getUrl(getProperties(), ServerUrlTypes.REGISTERED_FRIENDS);
+        String registeredFriendsUrl = helper.getUrl(ServerUrlTypes.REGISTERED_FRIENDS);
 
         UserInfo[] registeredFriends = RestUtils
                 .get(String.format(registeredFriendsUrl, userId), UserInfo[].class);
@@ -100,8 +77,7 @@ public class ServerClientService implements IServerClientService {
      */
     @Override
     public String getGoogleProfilePicUrl(String userId) throws IOException {
-        String requestUrl = ServerClientServiceHelper
-                .getUrl(getProperties(), ServerUrlTypes.GOOGLE_PROFILE_PICTURE);
+        String requestUrl = helper.getUrl(ServerUrlTypes.GOOGLE_PROFILE_PICTURE);
 
         GoogleProfilePicResponse pic = RestUtils
                 .get(String.format(requestUrl, userId), GoogleProfilePicResponse.class);
@@ -150,8 +126,7 @@ public class ServerClientService implements IServerClientService {
     @Override
     public GetChallengeImageResponse getChallengeImageUrl(Integer challengeId) throws IOException {
 
-        String getChallengeImageUrl = ServerClientServiceHelper
-                .getUrl(getProperties(), ServerUrlTypes.REQUEST_CHALLENGES_IMAGE);
+        String getChallengeImageUrl = helper.getUrl(ServerUrlTypes.REQUEST_CHALLENGES_IMAGE);
 
         getChallengeImageUrl = String.format(getChallengeImageUrl, challengeId);
 
@@ -167,12 +142,35 @@ public class ServerClientService implements IServerClientService {
      */
     @Override
     public GetChallengeResponse getChallenge(Integer challengeId) throws IOException {
-        String getChallengeUrl = ServerClientServiceHelper
-                .getUrl(getProperties(), ServerUrlTypes.REQUEST_CHALLENGES);
+        String getChallengeUrl = helper.getUrl(ServerUrlTypes.REQUEST_CHALLENGES);
 
         getChallengeUrl = String.format(getChallengeUrl, challengeId);
 
         return RestUtils.get(getChallengeUrl, GetChallengeResponse.class);
+    }
+
+    /**
+     * This method creates or updates a given token in Geohangman Servers
+     *
+     * @param userId User to be updated
+     * @param token  Token to be sent
+     *
+     * @return User Id if succeeded, otherwise returns null
+     *
+     * @throws IOException
+     */
+    @Override
+    public String createOrUpdateToken(String userId, String token) throws IOException {
+        String tokenUrl = String.format(helper.getUrl(ServerUrlTypes.TOKENS), userId, token);
+
+        String response = null;
+        try {
+            response = RestUtils.post(tokenUrl, null, String.class);
+        } catch (IllegalArgumentException ex) {
+            Log.e(Messages.ERROR, "An error has occurred while creating/updating token to server",
+                    ex);
+        }
+        return response;
     }
 
     private CreateChallengeImageResponse sendImageChallenge(Challenge challenge) throws
@@ -181,8 +179,7 @@ public class ServerClientService implements IServerClientService {
         CreateChallengeImageRequest request = ServerClientServiceHelper
                 .buildCreateImageChallengeRequest(challenge);
 
-        String createImageUrl = ServerClientServiceHelper
-                .getUrl(getProperties(), ServerUrlTypes.CHALLENGES_IMAGE);
+        String createImageUrl = helper.getUrl(ServerUrlTypes.CHALLENGES_IMAGE);
 
         return RestUtils.post(createImageUrl, request, CreateChallengeImageResponse.class);
     }
@@ -203,8 +200,7 @@ public class ServerClientService implements IServerClientService {
         CreateChallengeRequest request = ServerClientServiceHelper
                 .buildCreateChallengeRequest(challenge, challengerId, opponentId);
 
-        String challengesUrl = ServerClientServiceHelper
-                .getUrl(getProperties(), ServerUrlTypes.CHALLENGES);
+        String challengesUrl = helper.getUrl(ServerUrlTypes.CHALLENGES);
 
         return RestUtils.post(challengesUrl, request, CreateChallengeResponse.class);
     }
@@ -218,10 +214,9 @@ public class ServerClientService implements IServerClientService {
      * @throws NoSuchAlgorithmException
      */
     private void createUser(UserInfo user) throws IOException, NoSuchAlgorithmException {
-        CreateUpdateUserRequest request = ServerClientServiceHelper
-                .buildUserRequest(user, getProperties());
+        CreateUpdateUserRequest request = helper.buildUserRequest(user);
 
-        String usersUrl = ServerClientServiceHelper.getUrl(getProperties(), ServerUrlTypes.USERS);
+        String usersUrl = helper.getUrl(ServerUrlTypes.USERS);
 
         String response = RestUtils.post(usersUrl, request, String.class);
 
@@ -241,10 +236,9 @@ public class ServerClientService implements IServerClientService {
      * @throws NoSuchAlgorithmException
      */
     private void createFriends(UserInfo user) throws IOException, NoSuchAlgorithmException {
-        CreateUpdateFriendsRequest request = ServerClientServiceHelper
-                .buildUserFriendsRequest(user.getFriends(), getProperties());
+        CreateUpdateFriendsRequest request = helper.buildUserFriendsRequest(user.getFriends());
 
-        String usersUrl = ServerClientServiceHelper.getUrl(getProperties(), ServerUrlTypes.FRIENDS);
+        String usersUrl = helper.getUrl(ServerUrlTypes.FRIENDS);
         usersUrl = String.format(usersUrl, user.getId());
 
         String response = RestUtils.post(usersUrl, request, String.class);

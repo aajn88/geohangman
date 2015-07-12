@@ -16,6 +16,7 @@ import com.doers.games.geohangman.model.UserInfo;
 import com.doers.games.geohangman.services.IUsersService;
 import com.doers.games.geohangman.utils.GooglePlusUtils;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import roboguice.RoboGuice;
 import roboguice.activity.RoboActionBarActivity;
+import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
 /**
@@ -41,12 +43,16 @@ import roboguice.inject.InjectView;
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
+@ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActionBarActivity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<People.LoadPeopleResult> {
 
     /* Request code used to invoke sign in user interactions. */
     private static final int RC_SIGN_IN = 0;
+
+    /* Request code used to check Google Play Services availability. */
+    private static final int RC_GPS_CHECK = 1;
 
     static {
         RoboGuice.setUseAnnotationDatabases(false);
@@ -80,7 +86,8 @@ public class MainActivity extends RoboActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        verifyGooglePlayServices();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(Plus.API)
@@ -96,6 +103,29 @@ public class MainActivity extends RoboActionBarActivity
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        verifyGooglePlayServices();
+    }
+
+    /**
+     * This method verifies if Google Play Services are activated, it not, shows a
+     * Google-provided dialog
+     */
+    private void verifyGooglePlayServices() {
+        GoogleApiAvailability availability = GoogleApiAvailability.getInstance();
+        int result = availability.isGooglePlayServicesAvailable(this);
+        switch (result) {
+            case ConnectionResult.SERVICE_MISSING:
+            case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+            case ConnectionResult.SERVICE_DISABLED:
+                availability.getErrorDialog(this, result, RC_GPS_CHECK);
+                break;
+        }
     }
 
     @Override
@@ -178,6 +208,10 @@ public class MainActivity extends RoboActionBarActivity
             if (!mGoogleApiClient.isConnected()) {
                 mGoogleApiClient.reconnect();
             }
+        }
+
+        if(requestCode == RC_GPS_CHECK && resultCode != RESULT_OK) {
+            finish();
         }
     }
 
