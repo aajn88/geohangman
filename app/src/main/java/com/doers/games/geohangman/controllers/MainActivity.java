@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import roboguice.RoboGuice;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
@@ -53,10 +52,6 @@ public class MainActivity extends RoboActionBarActivity
 
     /* Request code used to check Google Play Services availability. */
     private static final int RC_GPS_CHECK = 1;
-
-    static {
-        RoboGuice.setUseAnnotationDatabases(false);
-    }
 
     /** G+ sign-in button * */
     @InjectView(R.id.signInButton)

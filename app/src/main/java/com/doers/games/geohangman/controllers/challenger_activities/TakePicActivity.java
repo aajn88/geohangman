@@ -104,10 +104,10 @@ public class TakePicActivity extends RoboActionBarActivity {
         File photo;
 
         try {
-            photo = IOUtils.createTemporaryFile(TEMPORARY_PICTURE_FILE_NAME, JPG_EXTENSION);
+            photo = IOUtils.createFile(TEMPORARY_PICTURE_FILE_NAME, JPG_EXTENSION);
             photo.delete();
         } catch (IOException e) {
-            Log.e(Messages.ERROR, Messages.CREATING_FILE_ERROR);
+            Log.e(Messages.ERROR, Messages.CREATING_FILE_ERROR, e);
             Toast.makeText(this, R.string.check_sd_card_error, Toast.LENGTH_LONG).show();
             return;
         }
@@ -142,7 +142,7 @@ public class TakePicActivity extends RoboActionBarActivity {
      * @param pic to be loaded and stored
      */
     private void loadPic(Bitmap pic) {
-        geoHangmanService.storePic(pic);
+        geoHangmanService.storePic(pic, mImageUri);
         loadPic();
     }
 

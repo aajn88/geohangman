@@ -1,14 +1,16 @@
 package com.doers.games.geohangman.configuration;
 
+import com.doers.games.geohangman.managers.IChallengesManager;
+import com.doers.games.geohangman.managers.IUsersManager;
+import com.doers.games.geohangman.managers.impl.ChallengesManager;
+import com.doers.games.geohangman.managers.impl.UsersManager;
 import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.doers.games.geohangman.services.IServerClientService;
 import com.doers.games.geohangman.services.ITokenService;
-import com.doers.games.geohangman.services.IUsersManager;
 import com.doers.games.geohangman.services.IUsersService;
 import com.doers.games.geohangman.services.impl.GeoHangmanService;
 import com.doers.games.geohangman.services.impl.ServerClientService;
 import com.doers.games.geohangman.services.impl.TokenService;
-import com.doers.games.geohangman.services.impl.UsersManager;
 import com.doers.games.geohangman.services.impl.UsersService;
 import com.google.inject.AbstractModule;
 
@@ -29,6 +31,7 @@ public class ConfigurationModule extends AbstractModule {
         bind(IUsersService.class).to(UsersService.class);
         bind(ITokenService.class).to(TokenService.class);
         bind(IUsersManager.class).to(UsersManager.class);
+        bind(IChallengesManager.class).to(ChallengesManager.class);
     }
 
 }

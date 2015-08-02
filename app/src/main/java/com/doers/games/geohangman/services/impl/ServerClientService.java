@@ -6,7 +6,6 @@ import com.doers.games.geohangman.constants.Messages;
 import com.doers.games.geohangman.constants.ServerUrlTypes;
 import com.doers.games.geohangman.model.Challenge;
 import com.doers.games.geohangman.model.UserInfo;
-import com.doers.games.geohangman.model.restful.CreateChallengeImageRequest;
 import com.doers.games.geohangman.model.restful.CreateChallengeImageResponse;
 import com.doers.games.geohangman.model.restful.CreateChallengeRequest;
 import com.doers.games.geohangman.model.restful.CreateChallengeResponse;
@@ -20,10 +19,13 @@ import com.doers.games.geohangman.utils.RestUtils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * IServerClientService implementation
@@ -94,16 +96,13 @@ public class ServerClientService implements IServerClientService {
     /**
      * This method sends a create challenge request to the server. Then its response is returned
      *
-     * @param challenge    To be sent
-     * @param challengerId The challenger Id
-     * @param opponentId   The target opponent who will receive the challenge
+     * @param challenge To be sent
      *
      * @return Server's response
      */
     @Override
-    public CreateChallengeResponse createChallenge(Challenge challenge, String challengerId,
-                                                   String opponentId) throws IOException {
-        CreateChallengeResponse response = sendBasicChallenge(challenge, challengerId, opponentId);
+    public CreateChallengeResponse createChallenge(Challenge challenge) throws IOException {
+        CreateChallengeResponse response = sendBasicChallenge(challenge);
 
         challenge.setId(response.getChallengeId());
 
@@ -176,29 +175,28 @@ public class ServerClientService implements IServerClientService {
     private CreateChallengeImageResponse sendImageChallenge(Challenge challenge) throws
             IOException {
 
-        CreateChallengeImageRequest request = ServerClientServiceHelper
-                .buildCreateImageChallengeRequest(challenge);
+        String createImageUrl = String
+                .format(helper.getUrl(ServerUrlTypes.CHALLENGES_IMAGE), challenge.getId());
 
-        String createImageUrl = helper.getUrl(ServerUrlTypes.CHALLENGES_IMAGE);
+        Map<String, File> files = new HashMap<String, File>();
+        files.put("pic", new File(challenge.getPicPath()));
 
-        return RestUtils.post(createImageUrl, request, CreateChallengeImageResponse.class);
+        return RestUtils.postFiles(createImageUrl, null, files, CreateChallengeImageResponse
+                .class).getBody();
     }
 
     /**
      * This method sends the basic Challenge Information to server (all information but image)
      *
-     * @param challenge    The Challenge to be sent
-     * @param challengerId The Challenger Id
-     * @param opponentId   The opponent Id
+     * @param challenge The Challenge to be sent
      *
      * @return Request response by server
      *
      * @throws IOException If a communication error occurs
      */
-    private CreateChallengeResponse sendBasicChallenge(Challenge challenge, String challengerId,
-                                                       String opponentId) throws IOException {
+    private CreateChallengeResponse sendBasicChallenge(Challenge challenge) throws IOException {
         CreateChallengeRequest request = ServerClientServiceHelper
-                .buildCreateChallengeRequest(challenge, challengerId, opponentId);
+                .buildCreateChallengeRequest(challenge);
 
         String challengesUrl = helper.getUrl(ServerUrlTypes.CHALLENGES);
 

@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import com.doers.games.geohangman.R;
 import com.doers.games.geohangman.constants.Messages;
-import com.doers.games.geohangman.model.Challenge;
+import com.doers.games.geohangman.model.MapPoint;
 import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -126,7 +126,7 @@ public class SelectLocationHintActivity extends RoboFragmentActivity {
      */
     private void setUpMap() {
 
-        Challenge.MapPoint mapPoint = geoHangmanService.getStoredLocation();
+        MapPoint mapPoint = geoHangmanService.getStoredLocation();
 
         if(mapPoint != null) {
             LatLng newLatLng = new LatLng(mapPoint.getLat(), mapPoint.getLng());

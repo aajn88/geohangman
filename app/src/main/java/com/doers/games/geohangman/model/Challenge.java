@@ -2,6 +2,9 @@ package com.doers.games.geohangman.model;
 
 import android.graphics.Bitmap;
 
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+
 /**
  * This class represents the challenge to be sent to the opponent
  *
@@ -10,15 +13,30 @@ import android.graphics.Bitmap;
 public class Challenge {
 
     /** Challenge Id * */
+    @DatabaseField(generatedId = true)
     private Integer id;
+
+    /** Challenger Id * */
+    @DatabaseField
+    private String challengerId;
+
+    /** Opponent Id * */
+    @DatabaseField
+    private String opponentId;
 
     /** Pic taken * */
     private Bitmap pic;
 
+    /** Pic Uri * */
+    @DatabaseField
+    private String picPath;
+
     /** Word to be guessed * */
+    @DatabaseField
     private String word;
 
     /** Map Point * */
+    @DatabaseField(dataType = DataType.SERIALIZABLE)
     private MapPoint mapPoint;
 
     /**
@@ -36,6 +54,34 @@ public class Challenge {
     }
 
     /**
+     * @return the challengerId
+     */
+    public String getChallengerId() {
+        return challengerId;
+    }
+
+    /**
+     * @return challengerId the challengerId to set
+     */
+    public void setChallengerId(String challengerId) {
+        this.challengerId = challengerId;
+    }
+
+    /**
+     * @return the opponentId
+     */
+    public String getOpponentId() {
+        return opponentId;
+    }
+
+    /**
+     * @return opponentId the opponentId to set
+     */
+    public void setOpponentId(String opponentId) {
+        this.opponentId = opponentId;
+    }
+
+    /**
      * @return the pic
      */
     public Bitmap getPic() {
@@ -47,6 +93,20 @@ public class Challenge {
      */
     public void setPic(Bitmap pic) {
         this.pic = pic;
+    }
+
+    /**
+     * @return the picPath
+     */
+    public String getPicPath() {
+        return picPath;
+    }
+
+    /**
+     * @return picPath the picPath to set
+     */
+    public void setPicPath(String picPath) {
+        this.picPath = picPath;
     }
 
     /**
@@ -76,62 +136,4 @@ public class Challenge {
     public void setMapPoint(MapPoint mapPoint) {
         this.mapPoint = mapPoint;
     }
-
-    /**
-     * This class represents the MapPoint of the challenge
-     */
-    public static class MapPoint {
-
-        /** Lat on map * */
-        private double lat;
-
-        /** Lng on map * */
-        private double lng;
-
-        /** Zoom to be used * */
-        private float zoom;
-
-        /**
-         * @return the lat
-         */
-        public double getLat() {
-            return lat;
-        }
-
-        /**
-         * @return lat the lat to set
-         */
-        public void setLat(double lat) {
-            this.lat = lat;
-        }
-
-        /**
-         * @return the lng
-         */
-        public double getLng() {
-            return lng;
-        }
-
-        /**
-         * @return lng the lng to set
-         */
-        public void setLng(double lng) {
-            this.lng = lng;
-        }
-
-        /**
-         * @return the zoom
-         */
-        public float getZoom() {
-            return zoom;
-        }
-
-        /**
-         * @return zoom the zoom to set
-         */
-        public void setZoom(float zoom) {
-            this.zoom = zoom;
-        }
-    }
-
 }

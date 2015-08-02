@@ -1,4 +1,6 @@
-package com.doers.games.geohangman.services;
+package com.doers.games.geohangman.managers;
+
+import com.doers.games.geohangman.model.UserInfo;
 
 /**
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
@@ -8,16 +10,16 @@ public interface IUsersManager {
     /**
      * This method creates the user in this device. There will be just one user
      *
-     * @param id User Id
+     * @param user User
      * @return User Id if success, otherwise returns null
      */
-    String createUser(String id);
+    boolean createUser(UserInfo user);
 
     /**
      * This method retrieves stored User Id
-     * @return User Id if exists. Otherwise returns null
+     * @return User if exists. Otherwise returns null
      */
-    String getUser();
+    UserInfo getUser();
 
     /**
      * Creates a given token to the registered user
@@ -25,7 +27,7 @@ public interface IUsersManager {
      * @param token Token to be set
      * @return The token if success, otherwise returns null
      */
-    String createToken(String token);
+    boolean createToken(String token);
 
     /**
      * Retrieves registered token

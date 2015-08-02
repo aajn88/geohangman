@@ -5,9 +5,10 @@ import android.util.Log;
 
 import com.doers.games.geohangman.R;
 import com.doers.games.geohangman.constants.Messages;
+import com.doers.games.geohangman.model.UserInfo;
 import com.doers.games.geohangman.services.IServerClientService;
 import com.doers.games.geohangman.services.ITokenService;
-import com.doers.games.geohangman.services.IUsersManager;
+import com.doers.games.geohangman.managers.IUsersManager;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.google.inject.Inject;
@@ -75,10 +76,11 @@ public class TokenService implements ITokenService {
      * @param token token to be notified to server
      */
     private void notifyTokenToServer(String token) throws IOException {
-        String userId = usersManager.createToken(token);
+        boolean success = usersManager.createToken(token);
 
-        if (userId != null) {
-            serverClientService.createOrUpdateToken(userId, token);
+        if (success) {
+            UserInfo user = usersManager.getUser();
+            serverClientService.createOrUpdateToken(user.getId(), token);
         }
     }
 

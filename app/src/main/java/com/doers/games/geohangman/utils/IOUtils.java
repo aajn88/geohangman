@@ -42,13 +42,15 @@ public final class IOUtils {
      * @return Temporary file
      * @throws IOException
      */
-    public static File createTemporaryFile(String fileName, String ext) throws IOException {
-        File tempDir = Environment.getExternalStorageDirectory();
-        tempDir = new File(tempDir.getAbsolutePath() + TEMPORARY_FOLDER);
+    public static File createFile(String fileName, String ext) throws IOException {
+        File tempDir = new File(getGeohangmanFolderPath() + fileName + ext);
         if(!tempDir.exists()) {
             tempDir.mkdir();
         }
-        return File.createTempFile(fileName, ext, tempDir);
+
+//        tempDir.createNewFile();
+
+        return tempDir;
     }
 
     /**

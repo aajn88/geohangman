@@ -1,28 +1,30 @@
 package com.doers.games.geohangman.services.impl;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
-import android.os.Build;
+import android.net.Uri;
 
-import com.doers.games.geohangman.BuildConfig;
+import com.doers.games.geohangman.managers.IChallengesManager;
 import com.doers.games.geohangman.model.Challenge;
-import com.doers.games.geohangman.model.restful.CreateChallengeResponse;
+import com.doers.games.geohangman.model.UserInfo;
 import com.doers.games.geohangman.model.restful.GetChallengeImageResponse;
 import com.doers.games.geohangman.model.restful.GetChallengeResponse;
+import com.doers.games.geohangman.model.MapPoint;
 import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.doers.games.geohangman.services.IServerClientService;
 import com.doers.games.geohangman.services.IUsersService;
+import com.doers.games.geohangman.services.android_services.UploadChallengeService;
 import com.doers.games.geohangman.utils.ChallengeUtils;
-import com.doers.games.geohangman.utils.ImageUtils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * This is the GeoHangman Main Service.
- * <p/>
+ * <p>
  * Here is where challenge is stored and sent to the opponent
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
@@ -40,9 +42,17 @@ public class GeoHangmanService implements IGeoHangmanService {
     @Inject
     private IServerClientService serverClientService;
 
+    /** The Challenges Manager **/
+    @Inject
+    private IChallengesManager challengesManager;
+
     /** The users service * */
     @Inject
     private IUsersService usersService;
+
+    /** Current Context **/
+    @Inject
+    private Context context;
 
     /**
      * GeoHangman no-parameters constructor
@@ -55,8 +65,9 @@ public class GeoHangmanService implements IGeoHangmanService {
      * This method receives an image to be stored and then sent
      */
     @Override
-    public void storePic(Bitmap pic) {
+    public void storePic(Bitmap pic, Uri picUri) {
         challenge.setPic(pic);
+        challenge.setPicPath(picUri.getPath());
     }
 
     /**
@@ -78,7 +89,7 @@ public class GeoHangmanService implements IGeoHangmanService {
      */
     @Override
     public void storeLocation(double lat, double lng, float zoom) {
-        Challenge.MapPoint mapPoint = new Challenge.MapPoint();
+        MapPoint mapPoint = new MapPoint();
         mapPoint.setLat(lat);
         mapPoint.setLng(lng);
         mapPoint.setZoom(zoom);
@@ -100,7 +111,7 @@ public class GeoHangmanService implements IGeoHangmanService {
      * @return Stored location or null if it does not exist
      */
     @Override
-    public Challenge.MapPoint getStoredLocation() {
+    public MapPoint getStoredLocation() {
         return challenge.getMapPoint();
     }
 
@@ -171,9 +182,13 @@ public class GeoHangmanService implements IGeoHangmanService {
      * @param opponentId The opponent Id
      */
     @Override
-    public void sendChallengeToOpponent(String opponentId) throws IOException {
-        CreateChallengeResponse response = serverClientService
-                .createChallenge(challenge, usersService.getCurrentUser().getId(), opponentId);
+    public void sendChallengeToOpponent(String opponentId) throws IOException, SQLException {
+        UserInfo userInfo = usersService.getCurrentUser();
+        challenge.setOpponentId(opponentId);
+        challenge.setChallengerId(userInfo.getId());
+        challengesManager.create(challenge);
+        Intent uploadChallengeServiceIntent = new Intent(context, UploadChallengeService.class);
+        context.startService(uploadChallengeServiceIntent);
     }
 
     /**

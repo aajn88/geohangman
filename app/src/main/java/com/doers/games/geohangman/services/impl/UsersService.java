@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.doers.games.geohangman.model.UserInfo;
 import com.doers.games.geohangman.services.IServerClientService;
-import com.doers.games.geohangman.services.IUsersManager;
+import com.doers.games.geohangman.managers.IUsersManager;
 import com.doers.games.geohangman.services.IUsersService;
 import com.doers.games.geohangman.services.android_services.TokenIdIntentService;
 import com.google.inject.Inject;
@@ -52,10 +52,10 @@ public class UsersService implements IUsersService {
             NoSuchAlgorithmException {
         serverClient.createOrUpdateUser(currentUser);
         this.currentUser = currentUser;
-        String userId = usersManager.getUser();
+        UserInfo storedUser = usersManager.getUser();
 
-        if(!currentUser.getId().equals(userId)) {
-            usersManager.createUser(currentUser.getId());
+        if(storedUser == null || !currentUser.getId().equals(storedUser.getId())) {
+            usersManager.createUser(currentUser);
 
             Intent createTokenIntent = new Intent(context, TokenIdIntentService.class);
             context.startService(createTokenIntent);

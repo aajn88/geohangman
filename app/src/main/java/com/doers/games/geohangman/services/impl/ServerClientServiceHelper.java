@@ -10,6 +10,7 @@ import com.doers.games.geohangman.model.restful.CreateChallengeImageRequest;
 import com.doers.games.geohangman.model.restful.CreateChallengeRequest;
 import com.doers.games.geohangman.model.restful.CreateUpdateFriendsRequest;
 import com.doers.games.geohangman.model.restful.CreateUpdateUserRequest;
+import com.doers.games.geohangman.model.MapPoint;
 import com.doers.games.geohangman.utils.ImageUtils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -68,21 +69,17 @@ final class ServerClientServiceHelper {
      * This method builds a CreateChallengeRequest given a Challenge. This challenge request does
      * not include the challenge image.
      *
-     * @param challenge    The given challenge to create its request
-     * @param challengerId The challenger Id
-     * @param opponentId   The opponent Id
+     * @param challenge The given challenge to create its request
      *
      * @return Challenge request
      */
-    public static CreateChallengeRequest buildCreateChallengeRequest(Challenge challenge,
-                                                                     String challengerId,
-                                                                     String opponentId) {
+    public static CreateChallengeRequest buildCreateChallengeRequest(Challenge challenge) {
         CreateChallengeRequest request = new CreateChallengeRequest();
 
-        request.setChallengerId(challengerId);
-        request.setOpponentId(opponentId);
+        request.setChallengerId(challenge.getChallengerId());
+        request.setOpponentId(challenge.getOpponentId());
         request.setWord(challenge.getWord());
-        Challenge.MapPoint mp = challenge.getMapPoint();
+        MapPoint mp = challenge.getMapPoint();
         request.setLat(mp.getLat());
         request.setLng(mp.getLng());
         request.setZoom(mp.getZoom());

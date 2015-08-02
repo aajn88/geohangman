@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 
 import com.doers.games.geohangman.model.Challenge;
 import com.doers.games.geohangman.model.restful.GetChallengeResponse;
+import com.doers.games.geohangman.model.MapPoint;
 
 import java.io.IOException;
 import java.net.URL;
@@ -49,7 +50,7 @@ public final class ChallengeUtils {
      * @param challengeResponse This is the server response
      */
     private static void completeChallenge(Challenge challenge, GetChallengeResponse challengeResponse) {
-        Challenge.MapPoint mapPoint = new Challenge.MapPoint();
+        MapPoint mapPoint = new MapPoint();
 
         challenge.setWord(challengeResponse.getWord());
         mapPoint.setLat(challengeResponse.getLat());

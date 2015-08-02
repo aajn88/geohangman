@@ -1,10 +1,12 @@
 package com.doers.games.geohangman.services;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
-import com.doers.games.geohangman.model.Challenge;
+import com.doers.games.geohangman.model.MapPoint;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * This is the GeoHangman main Interface. This interface has all main services of GeoHangman.
@@ -18,7 +20,7 @@ public interface IGeoHangmanService {
      *
      * @param pic to be stored
      */
-    void storePic(Bitmap pic);
+    void storePic(Bitmap pic, Uri picUri);
 
     /**
      * This method returns the stored Pic
@@ -46,7 +48,7 @@ public interface IGeoHangmanService {
      *
      * @return Stored location or null if it does not exist
      */
-    Challenge.MapPoint getStoredLocation();
+    MapPoint getStoredLocation();
 
     /**
      * This method stores the word to be guessed by the opponent.
@@ -91,7 +93,7 @@ public interface IGeoHangmanService {
      *
      * @param opponentId The opponent Id
      */
-    void sendChallengeToOpponent(String opponentId) throws IOException;
+    void sendChallengeToOpponent(String opponentId) throws IOException, SQLException;
 
     /**
      * This method requests challenge image from server given a challengeId

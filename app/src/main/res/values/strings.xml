@@ -32,4 +32,8 @@
     <string name="error_creating_challenge">An error has occurred while creating challenge</string>
     <string name="yes_text">Yes</string>
     <string name="no_text">No</string>
+    <string name="upload_file_notification_content">Sincronización en proceso...</string>
+    <string name="upload_file_notification_content_during_process" formatted="false">%d%% completado...</string>
+    <string name="upload_file_notification_completed">Se ha completado la sincronización</string>
+    <string name="upload_file_notification_title">Sincronizando imágenes con el servidor</string>
 </resources>

@@ -1,8 +1,18 @@
 package com.doers.games.geohangman.utils;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -88,12 +98,57 @@ public final class RestUtils {
     }
 
     /**
+     * This method posts multipart files
+     *
+     * @param url URL Target
+     * @param vars URL vars
+     * @param files Files to be uploaded
+     * @param responseClass Expected response class
+     * @param <T> Response Class
+     * @return Response entity with an instance of the expected response class
+     */
+    public static <T> ResponseEntity<T> postFiles(String url, Map<String, String> vars,
+                                                  Map<String, File> files, Class<T> responseClass) {
+        RestTemplate template = getRestTemplate(Boolean.TRUE);
+        MultiValueMap<String, Object> values = new LinkedMultiValueMap<>();
+
+        if (vars != null) {
+            for (Map.Entry<String, String> var : vars.entrySet()) {
+                values.add(var.getKey(), var.getValue());
+            }
+        }
+
+        if(files != null) {
+            for (Map.Entry<String, File> fileMap : files.entrySet()) {
+                File file = fileMap.getValue();
+                values.add(fileMap.getKey(), new FileSystemResource(file.getPath()));
+            }
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        HttpEntity request = new HttpEntity(values, headers);
+
+        ResponseEntity<T> response = template.exchange(url, HttpMethod.POST, request, responseClass);
+
+        return response;
+    }
+
+    /**
      * Get a configured RestTemplate
      * @return configured restTemplate
      */
     private static RestTemplate getRestTemplate() {
+        return getRestTemplate(Boolean.FALSE);
+    }
+
+    private static RestTemplate getRestTemplate(Boolean multipart) {
         RestTemplate template = new RestTemplate();
         template.getMessageConverters().add(new GsonHttpMessageConverter());
+        if(multipart) {
+            template.getMessageConverters().add(new FormHttpMessageConverter());
+        }
         return template;
     }
 }

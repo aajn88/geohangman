@@ -1,5 +1,8 @@
 package com.doers.games.geohangman.model;
 
+import com.doers.games.geohangman.persistance.SerializableCollectionsType;
+import com.j256.ormlite.field.DatabaseField;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -11,16 +14,24 @@ import java.util.List;
 public class UserInfo implements Serializable {
 
     /** User's Google Id (GeoHangman Id) * */
+    @DatabaseField(id = true)
     private String id;
 
     /** User's name * */
+    @DatabaseField
     private String name;
 
     /** User's email * */
+    @DatabaseField
     private String email;
 
     /** User's friends **/
+    @DatabaseField(persisterClass = SerializableCollectionsType.class)
     private List<UserInfo> friends;
+
+    /** User's GCM Token **/
+    @DatabaseField(canBeNull = true)
+    private String token;
 
     /**
      * @return the id
@@ -78,12 +89,29 @@ public class UserInfo implements Serializable {
         this.friends = friends;
     }
 
+    /**
+     * @return the token
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * @return token the token to set
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     @Override
     public String toString() {
-        return "UserInfo{" +
-                "email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                ", id='" + id + '\'' +
-                '}';
+        final StringBuilder sb = new StringBuilder("UserInfo{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", email='").append(email).append('\'');
+        sb.append(", friends=").append(friends);
+        sb.append(", token='").append(token).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

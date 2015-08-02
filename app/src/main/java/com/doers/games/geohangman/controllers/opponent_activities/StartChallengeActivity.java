@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.doers.games.geohangman.R;
 import com.doers.games.geohangman.constants.Messages;
-import com.doers.games.geohangman.model.Challenge;
+import com.doers.games.geohangman.model.MapPoint;
 import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.doers.games.geohangman.services.android_services.C2DMMessageReceiver;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -112,7 +112,7 @@ public class StartChallengeActivity extends RoboActionBarActivity {
 
         if (mMap != null) {
             mMap.clear();
-            Challenge.MapPoint point = geoHangmanService.getStoredLocation();
+            MapPoint point = geoHangmanService.getStoredLocation();
             LatLng latLng = new LatLng(point.getLat(), point.getLng());
             mMap.addMarker(new MarkerOptions().position(latLng));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, point.getZoom()));

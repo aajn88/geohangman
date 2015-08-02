@@ -37,6 +37,7 @@ public interface IServerClientService {
      * Retrieves the Google Profile picture URL
      *
      * @param userId userId to be searched
+     *
      * @return Profile Picture URL
      */
     String getGoogleProfilePicUrl(String userId) throws IOException;
@@ -45,17 +46,16 @@ public interface IServerClientService {
      * This method sends a create challenge request to the server. Then its response is returned
      *
      * @param challenge The challenge to be sent
-     * @param challengerId The challenger Id
-     * @param opponentId The target opponent who will receive the challenge
+     *
      * @return Server's response
      */
-    CreateChallengeResponse createChallenge(Challenge challenge, String challengerId, String
-                                                   opponentId) throws IOException;
+    CreateChallengeResponse createChallenge(Challenge challenge) throws IOException;
 
     /**
      * This method gets the challenge image given a challengeId
      *
      * @param challengeId The challengeId
+     *
      * @return The server response for GetChallengeImage request
      */
     GetChallengeImageResponse getChallengeImageUrl(Integer challengeId) throws IOException;
@@ -64,6 +64,7 @@ public interface IServerClientService {
      * This method requests a given challenge
      *
      * @param challengeId The challenge to be requested
+     *
      * @return The result challenge if exists, otherwise returns null
      */
     GetChallengeResponse getChallenge(Integer challengeId) throws IOException;
@@ -72,8 +73,10 @@ public interface IServerClientService {
      * This method creates or updates a given token in Geohangman Servers
      *
      * @param userId User to be updated
-     * @param token Token to be sent
+     * @param token  Token to be sent
+     *
      * @return User Id if succeeded, otherwise returns null
+     *
      * @throws IOException
      */
     String createOrUpdateToken(String userId, String token) throws IOException;

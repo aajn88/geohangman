@@ -17,6 +17,7 @@ import com.doers.games.geohangman.services.IGeoHangmanService;
 import com.google.inject.Inject;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.ContentView;
@@ -96,7 +97,7 @@ public class SendChallengeActivity extends RoboActionBarActivity {
             Boolean success = Boolean.TRUE;
             try {
                 geoHangmanService.sendChallengeToOpponent(opponentId);
-            } catch (IOException e) {
+            } catch (IOException | SQLException e) {
                 Log.e(Messages.ERROR, mErrorCreatingChallengeMsg, e);
                 success = Boolean.FALSE;
             }
